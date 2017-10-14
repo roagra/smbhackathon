@@ -20,6 +20,8 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.client.util.DateTime;
 
 import com.google.api.services.calendar.model.*;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.pb.reminderapp.model.EventDetails;
 import com.pb.reminderapp.model.EventInfo;
 import com.pb.reminderapp.model.RateResponse;
@@ -46,6 +48,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -281,9 +286,10 @@ public class MainActivity extends Activity
                 for (EventDetails eventDetails : details) {
                     // For simplicity assume event description contains all information required for getting details
                     // Mocked response, use getRates() method for real time response
+                        //rateResponse = GetAPIData.getRates(eventDetails.getEventDescription());
                     rateResponse = GetAPIData.getDummyRates(eventDetails.getEventDescription());
-                    eventInfo = appService.processResponse(rateResponse, eventDetails);
-                    allEvents.add(eventInfo);
+                        eventInfo = appService.processResponse(rateResponse, eventDetails);
+                        allEvents.add(eventInfo);
                 }
                 for(EventInfo info : allEvents){
                     eventStrings.add(
@@ -301,6 +307,8 @@ public class MainActivity extends Activity
                 return null;
             }
         }
+
+
 
         @Override
         protected void onPreExecute() {

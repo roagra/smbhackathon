@@ -12,6 +12,8 @@ import com.pb.reminderapp.model.RateResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,11 +29,23 @@ public class ReminderAppService {
      * @throws IOException
      */
     public List<EventDetails> getDataFromApi(com.google.api.services.calendar.Calendar mService) throws IOException {
-        DateTime now = new DateTime(System.currentTimeMillis());
+        //DateTime now = new DateTime(System.currentTimeMillis());
+        Date dateTomorrow = new Date();
+        Date date15Days = new Date();
+        Calendar calTomorrow = Calendar.getInstance();
+        calTomorrow.setTime(dateTomorrow);
+        calTomorrow.add(Calendar.DATE, 1);
+        dateTomorrow = calTomorrow.getTime();
+        Calendar cal15Days = Calendar.getInstance();
+        cal15Days.setTime(date15Days);
+        cal15Days.add(Calendar.DATE, 15);
+        date15Days = cal15Days.getTime();
+
         List<EventDetails> listEventDetails = new ArrayList<>();
         Events events = mService.events().list("primary")
                 .setMaxResults(100)
-                .setTimeMin(now)
+                .setTimeMin( new DateTime(dateTomorrow))
+                .setTimeMax(new DateTime(date15Days))
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();
@@ -61,21 +75,27 @@ public class ReminderAppService {
     }
 
     public void storeEventInCalendar(com.google.api.services.calendar.Calendar mService, List<String> eventStrings) throws IOException {
-        Event event = new Event()
-                .setSummary("Today's todo list")
-                .setDescription(eventStrings.get(0));
 
-        DateTime startDateTime = new DateTime("2017-10-08T09:00:00+05:30");
+        String ToDoDescription = createTodoDescription(eventStrings);
+        Event event = new Event()
+                .setSummary("Today's TODO list")
+                .setDescription(ToDoDescription);
+        Date currentDate = new Date();
+        currentDate.setTime(System.currentTimeMillis());
+        Date currentDateAndOneHour = new Date();
+        currentDateAndOneHour.setTime(System.currentTimeMillis() + 3600000);
+        DateTime startDateTime = new DateTime(currentDate);
         EventDateTime start = new EventDateTime()
                 .setDateTime(startDateTime).setTimeZone("Asia/Kolkata");
         event.setStart(start);
 
-        DateTime endDateTime = new DateTime("2017-10-08T10:00:00+05:30");
+        //DateTime endDateTime = new DateTime("2017-10-13T11:00:00+05:30");
+        DateTime endDateTime = new DateTime(currentDateAndOneHour);
         EventDateTime end = new EventDateTime()
                 .setDateTime(endDateTime).setTimeZone("Asia/Kolkata");
         event.setEnd(end);
 
-        String[] recurrence = new String[]{"RRULE:FREQ=DAILY;COUNT=2"};
+        String[] recurrence = new String[]{"RRULE:FREQ=DAILY;COUNT=1"};
         event.setRecurrence(Arrays.asList(recurrence));
 
         EventReminder[] reminderOverrides = new EventReminder[]{
@@ -86,5 +106,13 @@ public class ReminderAppService {
         String calendarId = "primary";
         event = mService.events().insert(calendarId, event).execute();
         System.out.printf("Event created: %s\n", event.getHtmlLink());
+    }
+
+    private String createTodoDescription(List<String> eventStrings) {
+        StringBuffer sb = new StringBuffer();
+        for(String eventString : eventStrings){
+            sb.append(eventString).append("\n");
+        }
+        return sb.toString();
     }
 }

@@ -27,7 +27,7 @@ public class GetAPIData {
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             // Add Request Header
             urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Authorization","Basic abcdefgh==");
+            urlConnection.setRequestProperty("Authorization","Basic NGIzVGt3R0FGM3NsQUJaaE1tWEZTNHJKakM4ZXZNOEw6dVVkY0V3djV4OEJUbnVGaA==");
             urlConnection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength ));
             urlConnection.setUseCaches(false);
@@ -63,7 +63,8 @@ public class GetAPIData {
         RateResponse rateResponse = null;
         try {
             URL url = new URL("https://api-sandbox.pitneybowes.com/shippingservices/v1/rates");
-            String urlParameters  = request;
+            JSONObject jsonObj = new JSONObject(request);
+            String urlParameters  = jsonObj.toString();
             byte[] postData = urlParameters.getBytes();
             int postDataLength = postData.length;
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -139,7 +140,8 @@ public class GetAPIData {
             "\t\t\t\"length\": 6,\n" +
             "\t\t\t\"width\": 0.25,\n" +
             "\t\t\t\"height\": 4,\n" +
-            "\t\t\t\"irregularParcelGirth\": 0.002\n" +
+            "\t\t\t\"" +
+            "\": 0.002\n" +
             "\t\t}\n" +
             "\t},\n" +
             "\t\"rates\": [\n" +
