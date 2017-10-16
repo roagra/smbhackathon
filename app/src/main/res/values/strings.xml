@@ -1,3 +1,65 @@
 <resources>
-    <string name="app_name">ReminderApp</string>
+    <string name="app_name">Shipping Reminder</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="action_settings">Refresh</string>
+    <string name="title_activity_register">Register</string>
+    <string name="map_view"> <u>Map View</u></string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_sender_user_id">Sender User Id</string>
+    <string name="sender_user_id">Sender User Id</string>
+    <string name="action_sign_in">Register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_incorrect_password">problem in registration</string>
+    <string name="error_invalid_password">This sender user id is invalid</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_csd_insight">CsdInsight</string>
+    <string name="pbName">Pitney Bowes</string>
+    <string name="title_activity_base_tabbed">BaseTabbedActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="please_try_again_later">Please try again later.</string>
+    <string name="allow_permissions">Allow permission(s)</string>
+    <string name="screen_title">Mailers Calender Sync And Automated Label Print</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="accept_permissions_go_to_settings">You can only continue using the application once you accept these permissions.   To use the application you need to activate user permission under settings.</string>
+    <string name="network_error">Network Error!</string>
+    <string name="pleae_check_your_internet">Please check your Internet Connectivity.</string>
+    <string name="retry">Retry</string>
+    <string name="want_to_enable_your_gps">Your GPS seems to be disabled, do you want to enable it?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="exit_the_app">Exit the app</string>
+    <string name="no_data_available">No data available yet!</string>
+    <string name="address">Address</string>
+    <string name="colon">:</string>
+    <string name="select_drive_time">Select Drive Time</string>
+    <string name="drive_time">Drive Time</string>
+    <string name="min">min</string>
+    <string name="find_customers">Find Customers</string>
+    <string name="next_select_customers">Next: Select Customers</string>
+    <string name="select_customers">Select Customers</string>
+    <string name="configure_api_secret_key">Configure API keys</string>
+    <string name="enter_api_key">Enter API Key</string>
+    <string name="enter_secret_key">Enter Secret Key</string>
+    <string name="todays_shipment">Today\'s Shipments</string>
+    <string name="preview_marketing_content">Preview Marketing Content</string>
+    <string name="check_your_internet_connectivity">Please check your internet connectivity</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="submit">Submit</string>
+    <string name="marketing_content">Marketing Content</string>
+    <string name="print">Print</string>
+    <string name="back">Back</string>
+    <string name="alert">Alert</string>
+    <string name="api_key_not_found">API key and Secret not found.</string>
+    <string name="key_error">Key Error!</string>
+    <string name="error">Error!</string>
+    <string name="title_activity_data_detail_tabbed">DataDetailTabbedActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

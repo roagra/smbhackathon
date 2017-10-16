@@ -20,13 +20,16 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.client.util.DateTime;
 
 import com.google.api.services.calendar.model.*;
+import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.pb.reminderapp.model.EventDetails;
 import com.pb.reminderapp.model.EventInfo;
+import com.pb.reminderapp.model.RateRequest;
 import com.pb.reminderapp.model.RateResponse;
 import com.pb.reminderapp.service.ReminderAppService;
 import com.pb.reminderapp.utility.GetAPIData;
+import com.pb.reminderapp.utility.LazyAdapter;
 
 import android.Manifest;
 import android.accounts.AccountManager;
@@ -40,13 +43,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -62,9 +68,21 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends Activity
         implements EasyPermissions.PermissionCallbacks {
+
+    private static Context context;
+    private ListView listView;
+    private LazyAdapter adapter;
+    private MainActivity mainActivity;
+    final Handler handler = new Handler();
+
+    public static Context getContext() {
+        return context;
+    }
+
+
     GoogleAccountCredential mCredential;
-    private TextView mOutputText;
-    private Button mCallApiButton;
+    //    private TextView mOutputText;
+//    private Button mCallApiButton;
     ProgressDialog mProgress;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
@@ -74,52 +92,48 @@ public class MainActivity extends Activity
 
     private static final String BUTTON_TEXT = "Get All Shipment Details and create ToDo List";
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = { CalendarScopes.CALENDAR };
+    private static final String[] SCOPES = {CalendarScopes.CALENDAR};
 
     /**
      * Create the main activity.
+     *
      * @param savedInstanceState previously saved instance data.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LinearLayout activityLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        activityLayout.setLayoutParams(lp);
-        activityLayout.setOrientation(LinearLayout.VERTICAL);
-        activityLayout.setPadding(16, 16, 16, 16);
-
-        ViewGroup.LayoutParams tlp = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        mCallApiButton = new Button(this);
-        mCallApiButton.setText(BUTTON_TEXT);
-        mCallApiButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCallApiButton.setEnabled(false);
-                mOutputText.setText("");
-                getResultsFromApi();
-                mCallApiButton.setEnabled(true);
-            }
-        });
-        activityLayout.addView(mCallApiButton);
-
-        mOutputText = new TextView(this);
-        mOutputText.setLayoutParams(tlp);
-        mOutputText.setPadding(16, 16, 16, 16);
-        mOutputText.setVerticalScrollBarEnabled(true);
-        mOutputText.setMovementMethod(new ScrollingMovementMethod());
-        mOutputText.setText(BUTTON_TEXT);
-        activityLayout.addView(mOutputText);
-
+        context = getApplicationContext();
+        mainActivity = this;
+        setContentView(R.layout.notification_activity);
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("Calling Google Calendar API ...");
+        // Initialize credentials and service object.
+        mCredential = GoogleAccountCredential.usingOAuth2(
+                getApplicationContext(), Arrays.asList(SCOPES))
+                .setBackOff(new ExponentialBackOff());
 
-        setContentView(activityLayout);
+
+        listView = (ListView) findViewById(R.id.list);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+
+            }
+        });
+
+        adapter = new LazyAdapter(this, new ArrayList<EventDetails>());
+        listView.setAdapter(adapter);
+        getResultsFromApi();
+        mProgress = new ProgressDialog(this);
+        //handler.postDelayed(runnable, 10000);
+//        this.runOnUiThread(runnable);
+
+//        mProgress = new ProgressDialog(this);
+//        mProgress.setMessage("Calling Google Calendar API ...");
+
 
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
@@ -129,16 +143,30 @@ public class MainActivity extends Activity
 
 
     private void getResultsFromApi() {
-        if (! isGooglePlayServicesAvailable()) {
+        if (!isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
-        } else if (! isDeviceOnline()) {
-            mOutputText.setText("No network connection available.");
+        } else if (!isDeviceOnline()) {
+            //mOutputText.setText("No network connection available.");
         } else {
+
+//            mProgress.setMessage("Calling Google Calendar API ...");
             new MakeRequestTask(mCredential).execute();
         }
     }
+
+
+    private final Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            getResultsFromApi();
+            adapter.notifyDataSetChanged();
+            listView.invalidateViews();
+            listView.refreshDrawableState();
+            handler.postDelayed(runnable, 10000);
+        }
+    };
 
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
     private void chooseAccount() {
@@ -169,11 +197,11 @@ public class MainActivity extends Activity
     protected void onActivityResult(
             int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
+        switch (requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    mOutputText.setText(
-                            "App requires Google Play Services.");
+//                    mOutputText.setText(
+//                            "App requires Google Play Services.");
                 } else {
                     getResultsFromApi();
                 }
@@ -257,7 +285,7 @@ public class MainActivity extends Activity
         dialog.show();
     }
 
-    private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
+    private class MakeRequestTask extends AsyncTask<Void, Void, List<EventDetails>> {
         private com.google.api.services.calendar.Calendar mService = null;
         private Exception mLastError = null;
 
@@ -272,36 +300,35 @@ public class MainActivity extends Activity
 
         /**
          * Background task to call Google Calendar API.
+         *
          * @param params no parameters needed for this task.
          */
         @Override
-        protected List<String> doInBackground(Void... params) {
+        protected List<EventDetails> doInBackground(Void... params) {
             RateResponse rateResponse;
-            EventInfo eventInfo;
-            List<EventInfo> allEvents = new ArrayList<>();
-            List<String> eventStrings = new ArrayList<String>();
+            RateRequest rateRequest;
+//            List<EventInfo> allEvents = new ArrayList<>();
             ReminderAppService appService = new ReminderAppService();
             try {
+                Gson g = new Gson();
                 List<EventDetails> details = appService.getDataFromApi(mService);
                 for (EventDetails eventDetails : details) {
                     // For simplicity assume event description contains all information required for getting details
                     // Mocked response, use getRates() method for real time response
-                        //rateResponse = GetAPIData.getRates(eventDetails.getEventDescription());
+                    //rateResponse = GetAPIData.getRates(eventDetails.getEventDescription());
                     rateResponse = GetAPIData.getDummyRates(eventDetails.getEventDescription());
-                        eventInfo = appService.processResponse(rateResponse, eventDetails);
-                        allEvents.add(eventInfo);
-                }
-                for(EventInfo info : allEvents){
-                    eventStrings.add(
-                        String.format("\n Shipment Title: %s ----- Shipment Time: %s days ---- Shipment Cost: $%s \n", info.getEventTitle(), info.getDaysToShip(), info.getShipmentAmount()));
+//                    eventInfo = appService.processResponse(rateResponse, eventDetails);
+
+                    JSONObject jsonObject =  new JSONObject(eventDetails.getEventDescription());
+                    rateRequest = g.fromJson(jsonObject.toString(), RateRequest.class);
+//                    allEvents.add(eventInfo);
+                    eventDetails.setRateRequest(rateRequest);
                 }
 
-                // Store Event to Google Calendar
-                appService.storeEventInCalendar(mService,eventStrings);
-                eventStrings.add("\n Above Details added to Your Primary Google Calendar \n");
 
-                return eventStrings;
+                return details;
             } catch (Exception e) {
+                e.printStackTrace();
                 mLastError = e;
                 cancel(true);
                 return null;
@@ -309,27 +336,25 @@ public class MainActivity extends Activity
         }
 
 
-
         @Override
         protected void onPreExecute() {
-            mOutputText.setText("");
-            mProgress.show();
+            //mProgress.show();
         }
 
         @Override
-        protected void onPostExecute(List<String> output) {
-            mProgress.hide();
-            if (output == null || output.size() == 0) {
-                mOutputText.setText("No results returned.");
-            } else {
-                output.add(0, "Details of Shipments as stored in your Google Calendar:");
-                mOutputText.setText(TextUtils.join("\n", output));
+        protected void onPostExecute(List<EventDetails> output) {
+            if (output != null) {
+                adapter.getData().clear();
+                adapter.getData().addAll(output);
+                adapter.notifyDataSetChanged();
+                listView.invalidateViews();
+                listView.refreshDrawableState();
             }
         }
 
         @Override
         protected void onCancelled() {
-            mProgress.hide();
+
             if (mLastError != null) {
                 if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
                     showGooglePlayServicesAvailabilityErrorDialog(
@@ -340,11 +365,11 @@ public class MainActivity extends Activity
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
                             MainActivity.REQUEST_AUTHORIZATION);
                 } else {
-                    mOutputText.setText("The following error occurred:\n"
-                            + mLastError.getMessage());
+//                    mOutputText.setText("The following error occurred:\n"
+//                            + mLastError.getMessage());
                 }
             } else {
-                mOutputText.setText("Request cancelled.");
+//                mOutputText.setText("Request cancelled.");
             }
         }
     }

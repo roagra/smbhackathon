@@ -1,6 +1,7 @@
 package com.pb.reminderapp.utility;
 
 import com.google.gson.Gson;
+import com.pb.reminderapp.model.EventDetails;
 import com.pb.reminderapp.model.RateResponse;
 
 import org.json.JSONObject;
@@ -17,19 +18,29 @@ import java.net.URL;
 
 public class GetAPIData {
 
+    private static EventDetails eventDetails;
+
+    public static EventDetails getSelectedEventDetails() {
+        return eventDetails;
+    }
+
+    public static void setSelectedEventDetails(EventDetails eventDetailsObj) {
+        eventDetails = eventDetailsObj;
+    }
+
     private static String getToken() {
         String token = "";
         try {
             URL url = new URL("https://api.pitneybowes.com/oauth/token");
-            String urlParameters  = "grant_type=client_credentials";
+            String urlParameters = "grant_type=client_credentials";
             byte[] postData = urlParameters.getBytes();
             int postDataLength = postData.length;
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             // Add Request Header
             urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Authorization","Basic NGIzVGt3R0FGM3NsQUJaaE1tWEZTNHJKakM4ZXZNOEw6dVVkY0V3djV4OEJUbnVGaA==");
-            urlConnection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-            urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength ));
+            urlConnection.setRequestProperty("Authorization", "Basic NGIzVGt3R0FGM3NsQUJaaE1tWEZTNHJKakM4ZXZNOEw6dVVkY0V3djV4OEJUbnVGaA==");
+            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
             urlConnection.setUseCaches(false);
             urlConnection.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
@@ -48,8 +59,8 @@ public class GetAPIData {
                     sb.append(line + "\n");
                 }
                 br.close();
-                JSONObject jObject  = new JSONObject(sb.toString());
-                token = (String)jObject.get("access_token");
+                JSONObject jObject = new JSONObject(sb.toString());
+                token = (String) jObject.get("access_token");
             } else {
                 System.out.println(urlConnection.getResponseMessage());
             }
@@ -64,15 +75,15 @@ public class GetAPIData {
         try {
             URL url = new URL("https://api-sandbox.pitneybowes.com/shippingservices/v1/rates");
             JSONObject jsonObj = new JSONObject(request);
-            String urlParameters  = jsonObj.toString();
+            String urlParameters = jsonObj.toString();
             byte[] postData = urlParameters.getBytes();
             int postDataLength = postData.length;
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             // Add Request Header
             urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("X-PB-Shipper-Rate-Plan","PP_SRP_CBP");
-            urlConnection.setRequestProperty("Authorization","Bearer " + getToken());
-            urlConnection.setRequestProperty("Content-Type","application/json");
+            urlConnection.setRequestProperty("X-PB-Shipper-Rate-Plan", "PP_SRP_CBP");
+            urlConnection.setRequestProperty("Authorization", "Bearer " + getToken());
+            urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
             urlConnection.setUseCaches(false);
             urlConnection.setDoOutput(true);
@@ -204,6 +215,7 @@ public class GetAPIData {
 
     /**
      * As Actual API is not accessible, so created an dummy response
+     *
      * @param request
      * @return
      */

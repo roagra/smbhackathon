@@ -37,6 +37,7 @@ public class EventInfo {
 
     private String shipmentAmount;
 
+
     public ImageView getEventImage() {
         return eventImage;
     }
