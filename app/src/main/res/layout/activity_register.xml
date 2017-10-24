@@ -25,29 +25,10 @@
             android:visibility="gone" />
 
         <EditText
-            android:id="@+id/email"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_30"
-            android:layout_below="@+id/login_progress"
-            android:layout_marginBottom="@dimen/dp_20"
-            android:layout_marginLeft="@dimen/dp_50"
-            android:layout_marginRight="@dimen/dp_50"
-            android:background="@color/pb_gray_50_white"
-            android:hint="@string/prompt_email"
-            android:inputType="textEmailAddress"
-            android:padding="@dimen/dp_5"
-            android:shadowColor="@color/pb_gray_300_button_pressed"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="2"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_16" />
-
-        <EditText
             android:id="@+id/firstName"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_30"
-            android:layout_below="@+id/email"
+            android:layout_below="@+id/login_progress"
             android:layout_marginBottom="@dimen/dp_20"
             android:layout_marginLeft="@dimen/dp_50"
             android:layout_marginRight="@dimen/dp_50"

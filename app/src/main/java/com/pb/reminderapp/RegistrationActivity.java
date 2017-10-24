@@ -38,7 +38,6 @@ public class RegistrationActivity extends Activity
 
     private static Context context;
     // UI references.
-    private EditText mEmailView;
     private EditText firstNameView;
     private EditText lastNameView;
     private EditText addressView;
@@ -85,7 +84,6 @@ public class RegistrationActivity extends Activity
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
 
-        mEmailView = (EditText) findViewById(R.id.email);
 
         firstNameView = (EditText) findViewById(R.id.firstName);
         lastNameView = (EditText) findViewById(R.id.lastName);
@@ -110,9 +108,9 @@ public class RegistrationActivity extends Activity
 
     private void attemptLogin() {
 
-        PreferencesUtils.saveRegistrationPreference(mEmailView.getText().toString(), addressView.getText().
+        PreferencesUtils.saveRegistrationPreference("", addressView.getText().
                 toString(), firstNameView.getText().toString(), lastNameView.getText().toString());
-        Intent intent = new Intent(getContext(), MainActivity.class);
+        Intent intent = new Intent(getContext(), LabelCountActivity.class);
         getContext().startActivity(intent);
 
     }
@@ -128,7 +126,7 @@ public class RegistrationActivity extends Activity
         } else {
             mProgress.hide();
             if (PreferencesUtils.isRegistrationExist()) {
-                Intent intent = new Intent(getContext(), MainActivity.class);
+                Intent intent = new Intent(getContext(), LabelCountActivity.class);
                 getContext().startActivity(intent);
             }
         }
