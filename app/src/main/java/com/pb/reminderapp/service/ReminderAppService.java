@@ -127,7 +127,7 @@ public class ReminderAppService {
             if (dateCheck(deliveryDateIfShipDateTomorrow.getTime(),shipDateTomorrow.getTime())) {
                 sb.append("If package shipped on " + formatDate(shipDateTomorrow.getTime()) + " it will be delivered by " + formatDate(deliveryDateIfShipDateTomorrow.getTime()) + " in $" + dayAndRateMap.get(list.get(1)) + "\n");
             } else {
-                sb.append("If package shipped on " + formatDate(deliveryDateIfShipDateTomorrow.getTime()) + " it will be delivered by " + formatDate(deliveryDateIfShipDateTomorrow.getTime()) + " in $" + dayAndRateMap.get(list.get(0)) + "\n");
+                sb.append("If package shipped on " + formatDate(deliveryDateIfShipDateTomorrow.getTime()) + " it will be delivered by " + formatDate(deliveryDateIfShipDateTomorrow.getTime()) + " in $" + dayAndRateMap.get(list.get(1)) + "\n");
 
             }
         }
@@ -140,7 +140,7 @@ public class ReminderAppService {
             if (dateCheck(deliveryDateIfShipDateDayAfterTomorrow.getTime(),shipDateDayAfterTomorrow.getTime())) {
                 sb.append("If package shipped on " + formatDate(shipDateDayAfterTomorrow.getTime()) + " it will be delivered by " + formatDate(deliveryDateIfShipDateDayAfterTomorrow.getTime()) + " in $" + dayAndRateMap.get(list.get(2)));
             } else {
-                sb.append("If package shipped on " + formatDate(deliveryDateIfShipDateDayAfterTomorrow.getTime()) + " it will be delivered by " + formatDate(deliveryDateIfShipDateDayAfterTomorrow.getTime()) + " in $" + dayAndRateMap.get(list.get(0)) + "\n");
+                sb.append("If package shipped on " + formatDate(deliveryDateIfShipDateDayAfterTomorrow.getTime()) + " it will be delivered by " + formatDate(deliveryDateIfShipDateDayAfterTomorrow.getTime()) + " in $" + dayAndRateMap.get(list.get(2)) + "\n");
 
             }
         }

@@ -52,7 +52,8 @@ public class LazyAdapter extends BaseAdapter {
             vi = inflater.inflate(R.layout.list_row, null);
 
         TextView title = (TextView) vi.findViewById(R.id.title); // title
-        TextView artist = (TextView) vi.findViewById(R.id.artist); // artist name
+        TextView address = (TextView) vi.findViewById(R.id.address); // To Address
+        TextView recommendation = (TextView) vi.findViewById(R.id.recommendation); // artist name
         TextView duration = (TextView) vi.findViewById(R.id.duration); // duration
 
 
@@ -67,8 +68,9 @@ public class LazyAdapter extends BaseAdapter {
 //            thumb_image.setImageDrawable(myDrawable);
 //        }
         title.setText(eventInfo.getEventTitle());
-        artist.setText(eventInfo.getToAddress());
-        duration.setText(eventInfo.getSuggestion());
+        address.setText(eventInfo.getToAddress());
+        recommendation.setText(eventInfo.getSuggestion());
+        duration.setText(eventInfo.getUserDeliveryDateTime());
         ImageView mapViewLink = (ImageView) vi.findViewById(R.id.detailViewLink); // thumb image
         mapViewLink.setOnClickListener(new View.OnClickListener() {
             @Override
