@@ -23,6 +23,7 @@ import com.google.api.services.calendar.model.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.pb.reminderapp.model.EventDescription;
 import com.pb.reminderapp.model.EventDetails;
 import com.pb.reminderapp.model.EventInfo;
 import com.pb.reminderapp.model.RateRequest;
@@ -124,7 +125,7 @@ public class MainActivity extends Activity
             }
         });
 
-        adapter = new LazyAdapter(this, new ArrayList<EventDetails>());
+        adapter = new LazyAdapter(this, new ArrayList<EventInfo>());
         listView.setAdapter(adapter);
         getResultsFromApi();
         mProgress = new ProgressDialog(this);
@@ -135,10 +136,10 @@ public class MainActivity extends Activity
 //        mProgress.setMessage("Calling Google Calendar API ...");
 
 
-        // Initialize credentials and service object.
+/*        // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
-                .setBackOff(new ExponentialBackOff());
+                .setBackOff(new ExponentialBackOff());*/
     }
 
 
@@ -157,7 +158,7 @@ public class MainActivity extends Activity
     }
 
 
-    private final Runnable runnable = new Runnable() {
+/*    private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
             getResultsFromApi();
@@ -166,7 +167,7 @@ public class MainActivity extends Activity
             listView.refreshDrawableState();
             handler.postDelayed(runnable, 10000);
         }
-    };
+    };*/
 
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
     private void chooseAccount() {
@@ -285,7 +286,7 @@ public class MainActivity extends Activity
         dialog.show();
     }
 
-    private class MakeRequestTask extends AsyncTask<Void, Void, List<EventDetails>> {
+    private class MakeRequestTask extends AsyncTask<Void, Void, List<EventInfo>> {
         private com.google.api.services.calendar.Calendar mService = null;
         private Exception mLastError = null;
 
@@ -304,29 +305,28 @@ public class MainActivity extends Activity
          * @param params no parameters needed for this task.
          */
         @Override
-        protected List<EventDetails> doInBackground(Void... params) {
+        protected List<EventInfo> doInBackground(Void... params) {
             RateResponse rateResponse;
             RateRequest rateRequest;
-//            List<EventInfo> allEvents = new ArrayList<>();
+            List<EventInfo> listEventInfo = new ArrayList<>();
             ReminderAppService appService = new ReminderAppService();
             try {
                 Gson g = new Gson();
                 List<EventDetails> details = appService.getDataFromApi(mService);
                 for (EventDetails eventDetails : details) {
+                    EventInfo eventInfo = new EventInfo();
                     // For simplicity assume event description contains all information required for getting details
                     // Mocked response, use getRates() method for real time response
-                    //rateResponse = GetAPIData.getRates(eventDetails.getEventDescription());
-                    rateResponse = GetAPIData.getDummyRates(eventDetails.getEventDescription());
-//                    eventInfo = appService.processResponse(rateResponse, eventDetails);
-
-                    JSONObject jsonObject =  new JSONObject(eventDetails.getEventDescription());
-                    rateRequest = g.fromJson(jsonObject.toString(), RateRequest.class);
+                    EventDescription eventDescriptionJson =  convertStringToJson(eventDetails.getEventDescription());
+                    rateResponse = GetAPIData.getRates(eventDescriptionJson.getRateRequest());
+                    //rateResponse = GetAPIData.getDummyRates(eventDetails.getEventDescription());
+                    eventInfo = appService.processResponse(rateResponse, eventDetails, eventDescriptionJson.getDeliveryDate());
+                    //JSONObject jsonObject =  new JSONObject(eventDetails.getEventDescription());
+                    //rateRequest = g.fromJson(jsonObject.toString(), RateRequest.class);
 //                    allEvents.add(eventInfo);
-                    eventDetails.setRateRequest(rateRequest);
+                    listEventInfo.add(eventInfo);
                 }
-
-
-                return details;
+                return listEventInfo;
             } catch (Exception e) {
                 e.printStackTrace();
                 mLastError = e;
@@ -336,13 +336,15 @@ public class MainActivity extends Activity
         }
 
 
+
+
         @Override
         protected void onPreExecute() {
             //mProgress.show();
         }
 
         @Override
-        protected void onPostExecute(List<EventDetails> output) {
+        protected void onPostExecute(List<EventInfo> output) {
             if (output != null) {
                 adapter.getData().clear();
                 adapter.getData().addAll(output);
@@ -350,6 +352,12 @@ public class MainActivity extends Activity
                 listView.invalidateViews();
                 listView.refreshDrawableState();
             }
+        }
+
+        private EventDescription convertStringToJson(String eventDescription) {
+            Gson g = new Gson();
+            EventDescription eventDescriptionObj = g.fromJson(eventDescription, EventDescription.class);
+            return eventDescriptionObj;
         }
 
         @Override

@@ -2,6 +2,7 @@ package com.pb.reminderapp.utility;
 
 import com.google.gson.Gson;
 import com.pb.reminderapp.model.EventDetails;
+import com.pb.reminderapp.model.RateRequest;
 import com.pb.reminderapp.model.RateResponse;
 
 import org.json.JSONObject;
@@ -31,14 +32,14 @@ public class GetAPIData {
     private static String getToken() {
         String token = "";
         try {
-            URL url = new URL("https://api.pitneybowes.com/oauth/token");
+            URL url = new URL("https://api-sandbox.pitneybowes.com/oauth/token");
             String urlParameters = "grant_type=client_credentials";
             byte[] postData = urlParameters.getBytes();
             int postDataLength = postData.length;
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             // Add Request Header
             urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Authorization", "Basic NGIzVGt3R0FGM3NsQUJaaE1tWEZTNHJKakM4ZXZNOEw6dVVkY0V3djV4OEJUbnVGaA==");
+            urlConnection.setRequestProperty("Authorization", "Basic ZENzQXRBa2Y5QXVSS0gxVlk1eFpYdlZrSGJmTWxoUEw6S1l6WjJmTDJIYVJtbFlKQQ==");
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
             urlConnection.setUseCaches(false);
@@ -70,18 +71,20 @@ public class GetAPIData {
         return token;
     }
 
-    public static RateResponse getRates(String request) {
+    public static RateResponse getRates(RateRequest rateRequest) {
         RateResponse rateResponse = null;
+        Gson g = new Gson();
         try {
-            URL url = new URL("https://api-sandbox.pitneybowes.com/shippingservices/v1/rates");
-            JSONObject jsonObj = new JSONObject(request);
-            String urlParameters = jsonObj.toString();
+            URL url = new URL("https://api-sandbox.pitneybowes.com/shippingservices/v1/rates?includeDeliveryCommitment=true");
+            //JSONObject jsonObj = new JSONObject(request);
+            String rateRequestJson = g.toJson(rateRequest);
+            String urlParameters = rateRequestJson;
             byte[] postData = urlParameters.getBytes();
             int postDataLength = postData.length;
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             // Add Request Header
             urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("X-PB-Shipper-Rate-Plan", "PP_SRP_CBP");
+            urlConnection.setRequestProperty("X-PB-Shipper-Rate-Plan", "");
             urlConnection.setRequestProperty("Authorization", "Bearer " + getToken());
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
@@ -100,7 +103,7 @@ public class GetAPIData {
                     sb.append(line + "\n");
                 }
                 br.close();
-                Gson g = new Gson();
+
                 rateResponse = g.fromJson(sb.toString(), RateResponse.class);
             } else {
                 System.out.println(urlConnection.getResponseMessage());

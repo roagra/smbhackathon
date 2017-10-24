@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.pb.reminderapp.PrintPriviewActivity;
 import com.pb.reminderapp.R;
 import com.pb.reminderapp.model.EventDetails;
+import com.pb.reminderapp.model.EventInfo;
 import com.pb.reminderapp.model.RateRequest;
 
 import java.util.List;
@@ -20,10 +21,10 @@ import java.util.List;
 public class LazyAdapter extends BaseAdapter {
 
     private Context activity;
-    private List<EventDetails> data;
+    private List<EventInfo> data;
     private static LayoutInflater inflater = null;
 
-    public LazyAdapter(Context a, List<EventDetails> d) {
+    public LazyAdapter(Context a, List<EventInfo> d) {
         this.activity = a;
         this.data = d;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -37,7 +38,7 @@ public class LazyAdapter extends BaseAdapter {
         return position;
     }
 
-    public List<EventDetails> getData() {
+    public List<EventInfo> getData() {
         return data;
     }
 
@@ -55,7 +56,7 @@ public class LazyAdapter extends BaseAdapter {
         TextView duration = (TextView) vi.findViewById(R.id.duration); // duration
 
 
-        final EventDetails eventDetails = data.get(position);
+        final EventInfo eventInfo = data.get(position);
 
         // Setting all values in listview
         ImageView thumb_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
@@ -65,9 +66,9 @@ public class LazyAdapter extends BaseAdapter {
 //            myDrawable = activity.getResources().getDrawable(R.drawable.red_alert);
 //            thumb_image.setImageDrawable(myDrawable);
 //        }
-        title.setText(eventDetails.getEventTitle());
-        artist.setText(getMappedAddress(eventDetails.getRateRequest().getToAddress()));
-        duration.setText(eventDetails.getEventStartDate().toString());
+        title.setText(eventInfo.getEventTitle());
+        artist.setText(eventInfo.getToAddress());
+        duration.setText(eventInfo.getSuggestion());
         ImageView mapViewLink = (ImageView) vi.findViewById(R.id.detailViewLink); // thumb image
         mapViewLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +94,7 @@ public class LazyAdapter extends BaseAdapter {
         return vi;
     }
 
-    private String getMappedAddress(RateRequest.Address address) {
+/*    private String getMappedAddress(RateRequest.Address address) {
         StringBuilder addressString = new StringBuilder();
         for (String addressLine : address.getAddressLines()) {
             addressString.append(addressLine);
@@ -101,5 +102,5 @@ public class LazyAdapter extends BaseAdapter {
         addressString.append("," + address.getCityTown() + ", " + address.getPostalCode());
 
         return addressString.toString();
-    }
+    }*/
 }

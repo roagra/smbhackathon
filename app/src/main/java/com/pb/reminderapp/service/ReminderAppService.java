@@ -7,14 +7,26 @@ import com.google.api.services.calendar.model.EventReminder;
 import com.google.api.services.calendar.model.Events;
 import com.pb.reminderapp.model.EventDetails;
 import com.pb.reminderapp.model.EventInfo;
+import com.pb.reminderapp.model.RateRequest;
 import com.pb.reminderapp.model.RateResponse;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Created by ro003ag on 10/8/2017.
@@ -66,12 +78,105 @@ public class ReminderAppService {
     }
 
 
-    public EventInfo processResponse(RateResponse rateResponse, EventDetails eventDetails ) {
+    public EventInfo processResponse(RateResponse rateResponse, EventDetails eventDetails, String requiredDeliveryDate ) {
         EventInfo eventInfo = new EventInfo();
+        Map<Integer,Double> dayAndRateMap = new HashMap<>();
         eventInfo.setEventTitle(eventDetails.getEventTitle());
-        eventInfo.setDaysToShip(rateResponse.getRates().get(0).getDeliveryCommitment().getMaxEstimatedNumberOfDays());
-        eventInfo.setShipmentAmount(rateResponse.getRates().get(0).getBaseCharge().toString());
+        List<EventInfo.ShipmentDetail> shipmentDetails = new ArrayList<>();
+        for (RateResponse.Rate rate : rateResponse.getRates()){
+            if ((rate.getRateTypeId().equals("RETAIL") || rate.getRateTypeId().equals("CONTRACT_RATES")) && dateCheck(requiredDeliveryDate, rate.getDeliveryCommitment().getEstimatedDeliveryDateTime())) {
+                EventInfo.ShipmentDetail shipmentDetail = new EventInfo.ShipmentDetail();
+                shipmentDetail.setEstimatedDeliveryDateTime(rate.getDeliveryCommitment().getEstimatedDeliveryDateTime());
+                shipmentDetail.setShipmentAmount(rate.getTotalCarrierCharge().toString());
+                shipmentDetail.setServiceType(rate.getServiceId());
+                shipmentDetail.setPriority(1);
+                shipmentDetails.add(shipmentDetail);
+                dayAndRateMap.put(Integer.valueOf(rate.getDeliveryCommitment().getMaxEstimatedNumberOfDays()), rate.getTotalCarrierCharge());
+            }
+        }
+        String suggestion = checkforShippingOptions(dayAndRateMap);
+        eventInfo.setSuggestion(suggestion);
+        eventInfo.setUserDeliveryDateTime(requiredDeliveryDate);
+        eventInfo.setShipmentDetails(shipmentDetails);
+        eventInfo.setToAddress(getMappedAddress(rateResponse.getToAddress()));
         return eventInfo;
+    }
+
+    private String checkforShippingOptions(Map<Integer,Double> dayAndRateMap) {
+        StringBuilder sb = new StringBuilder();
+            TreeSet<Integer> treeSet = new TreeSet<>(dayAndRateMap.keySet());
+            List<Integer> list = new ArrayList(dayAndRateMap.keySet());
+            Collections.sort(list, Collections.reverseOrder());
+            // For Today's  Recommendation
+            if (list.size() > 0) {
+                Calendar shipDateToday = Calendar.getInstance();
+                Calendar deliveryDate = Calendar.getInstance();
+                deliveryDate.add(Calendar.DATE, list.get(0));
+                if (dateCheck(deliveryDate.getTime(),shipDateToday.getTime())) {
+                    sb.append("If package shipped on " + formatDate(shipDateToday.getTime()) + " it will be delivered by " + formatDate(deliveryDate.getTime()) + " in $" + dayAndRateMap.get(list.get(0)) + "\n");
+                } else {
+                    sb.append("If package shipped on " + formatDate(deliveryDate.getTime()) + " it will be delivered by " + formatDate(deliveryDate.getTime()) + " in $" + dayAndRateMap.get(list.get(0)) + "\n");
+                }
+            }
+            // For Tomorrow's Recommendation
+        if (list.size() > 1) {
+            Calendar shipDateTomorrow = Calendar.getInstance();
+            shipDateTomorrow.add(Calendar.DATE, 1);
+            Calendar deliveryDateIfShipDateTomorrow = Calendar.getInstance();
+            deliveryDateIfShipDateTomorrow.add(Calendar.DATE, list.get(1));
+            if (dateCheck(deliveryDateIfShipDateTomorrow.getTime(),shipDateTomorrow.getTime())) {
+                sb.append("If package shipped on " + formatDate(shipDateTomorrow.getTime()) + " it will be delivered by " + formatDate(deliveryDateIfShipDateTomorrow.getTime()) + " in $" + dayAndRateMap.get(list.get(1)) + "\n");
+            } else {
+                sb.append("If package shipped on " + formatDate(deliveryDateIfShipDateTomorrow.getTime()) + " it will be delivered by " + formatDate(deliveryDateIfShipDateTomorrow.getTime()) + " in $" + dayAndRateMap.get(list.get(0)) + "\n");
+
+            }
+        }
+            // For Day after tomorrow's Recommendation
+        if (list.size() > 2) {
+            Calendar shipDateDayAfterTomorrow = Calendar.getInstance();
+            shipDateDayAfterTomorrow.add(Calendar.DATE, 2);
+            Calendar deliveryDateIfShipDateDayAfterTomorrow = Calendar.getInstance();
+            deliveryDateIfShipDateDayAfterTomorrow.add(Calendar.DATE, list.get(2));
+            if (dateCheck(deliveryDateIfShipDateDayAfterTomorrow.getTime(),shipDateDayAfterTomorrow.getTime())) {
+                sb.append("If package shipped on " + formatDate(shipDateDayAfterTomorrow.getTime()) + " it will be delivered by " + formatDate(deliveryDateIfShipDateDayAfterTomorrow.getTime()) + " in $" + dayAndRateMap.get(list.get(2)));
+            } else {
+                sb.append("If package shipped on " + formatDate(deliveryDateIfShipDateDayAfterTomorrow.getTime()) + " it will be delivered by " + formatDate(deliveryDateIfShipDateDayAfterTomorrow.getTime()) + " in $" + dayAndRateMap.get(list.get(0)) + "\n");
+
+            }
+        }
+        return sb.toString();
+    }
+
+    private String formatDate(Date date) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        return df.format(date);
+    }
+
+
+    private boolean dateCheck(String requiredDeliveryDate, String estimatedDeliveryDateTime) {
+        Date requiredDeliveryDateD = null;
+        Date estimatedDeliveryDateTimeD = null;
+        try {
+            requiredDeliveryDateD = new SimpleDateFormat("MM-dd-yyyy").parse(requiredDeliveryDate);
+            estimatedDeliveryDateTimeD = new SimpleDateFormat("yyyy-MM-dd").parse(estimatedDeliveryDateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return requiredDeliveryDateD.after(estimatedDeliveryDateTimeD);
+    }
+
+    private boolean dateCheck(Date requiredDeliveryDate, Date estimatedDeliveryDateTime) {
+        return requiredDeliveryDate.after(estimatedDeliveryDateTime);
+    }
+
+    private String getMappedAddress(RateResponse.Address address) {
+        StringBuilder addressString = new StringBuilder();
+        for (String addressLine : address.getAddressLines()) {
+            addressString.append(addressLine);
+        }
+        addressString.append("," + address.getCityTown() + ", " + address.getPostalCode());
+
+        return addressString.toString();
     }
 
     public void storeEventInCalendar(com.google.api.services.calendar.Calendar mService, List<String> eventStrings) throws IOException {

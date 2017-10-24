@@ -11,6 +11,7 @@ public class EventDetails {
     private String eventStartDate;
 
     private String eventDescription;
+
     private RateRequest rateRequest;
 
     public RateRequest getRateRequest() {

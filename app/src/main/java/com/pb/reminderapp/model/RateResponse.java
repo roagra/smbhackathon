@@ -35,6 +35,94 @@ public class RateResponse {
         private String email;
         private Boolean residential;
         private String deliveryPoint;
+
+        public List<String> getAddressLines() {
+            return addressLines;
+        }
+
+        public void setAddressLines(List<String> addressLines) {
+            this.addressLines = addressLines;
+        }
+
+        public String getCityTown() {
+            return cityTown;
+        }
+
+        public void setCityTown(String cityTown) {
+            this.cityTown = cityTown;
+        }
+
+        public String getStateProvince() {
+            return stateProvince;
+        }
+
+        public void setStateProvince(String stateProvince) {
+            this.stateProvince = stateProvince;
+        }
+
+        public String getPostalCode() {
+            return postalCode;
+        }
+
+        public void setPostalCode(String postalCode) {
+            this.postalCode = postalCode;
+        }
+
+        public String getCountryCode() {
+            return countryCode;
+        }
+
+        public void setCountryCode(String countryCode) {
+            this.countryCode = countryCode;
+        }
+
+        public String getCompany() {
+            return company;
+        }
+
+        public void setCompany(String company) {
+            this.company = company;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public Boolean getResidential() {
+            return residential;
+        }
+
+        public void setResidential(Boolean residential) {
+            this.residential = residential;
+        }
+
+        public String getDeliveryPoint() {
+            return deliveryPoint;
+        }
+
+        public void setDeliveryPoint(String deliveryPoint) {
+            this.deliveryPoint = deliveryPoint;
+        }
     }
 
     public static class Parcel {
@@ -63,6 +151,7 @@ public class RateResponse {
         private String carrier;
         private String serviceId;
         private String parcelType;
+        private String rateTypeId;
         private List<SpecialServices> specialServices;
         private Double fee;
         private String inductionPostalCode;
@@ -73,7 +162,7 @@ public class RateResponse {
         private Double alternateTotalCharge;
         private DeliveryCommitment deliveryCommitment;
         private String currencyCode;
-        private Integer destinationZone;
+        private String destinationZone;
 
         public static class SpecialServices {
             private String specialServiceId;
@@ -162,6 +251,14 @@ public class RateResponse {
             this.parcelType = parcelType;
         }
 
+        public String getRateTypeId() {
+            return rateTypeId;
+        }
+
+        public void setRateTypeId(String rateTypeId) {
+            this.rateTypeId = rateTypeId;
+        }
+
         public List<SpecialServices> getSpecialServices() {
             return specialServices;
         }
@@ -242,11 +339,11 @@ public class RateResponse {
             this.currencyCode = currencyCode;
         }
 
-        public Integer getDestinationZone() {
+        public String getDestinationZone() {
             return destinationZone;
         }
 
-        public void setDestinationZone(Integer destinationZone) {
+        public void setDestinationZone(String destinationZone) {
             this.destinationZone = destinationZone;
         }
     }
