@@ -91,7 +91,7 @@ public class MainActivity extends Activity
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
-    private static final String BUTTON_TEXT = "Get All Shipment Details and create ToDo List";
+    private static final String WAIT_TEXT = "Getting Shipment Details from Google Calender....";
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = {CalendarScopes.CALENDAR};
 
@@ -107,7 +107,7 @@ public class MainActivity extends Activity
         mainActivity = this;
         setContentView(R.layout.notification_activity);
         mProgress = new ProgressDialog(this);
-        mProgress.setMessage("Calling Google Calendar API ...");
+        mProgress.setMessage(WAIT_TEXT);
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
@@ -127,8 +127,10 @@ public class MainActivity extends Activity
 
         adapter = new LazyAdapter(this, new ArrayList<EventInfo>());
         listView.setAdapter(adapter);
+        mProgress.show();
         getResultsFromApi();
-        mProgress = new ProgressDialog(this);
+
+
         //handler.postDelayed(runnable, 10000);
 //        this.runOnUiThread(runnable);
 
@@ -340,11 +342,12 @@ public class MainActivity extends Activity
 
         @Override
         protected void onPreExecute() {
-            //mProgress.show();
+            mProgress.show();
         }
 
         @Override
         protected void onPostExecute(List<EventInfo> output) {
+            mProgress.hide();
             if (output != null) {
                 adapter.getData().clear();
                 adapter.getData().addAll(output);
