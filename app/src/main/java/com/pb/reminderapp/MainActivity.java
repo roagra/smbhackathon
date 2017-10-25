@@ -31,6 +31,7 @@ import com.pb.reminderapp.model.RateResponse;
 import com.pb.reminderapp.service.ReminderAppService;
 import com.pb.reminderapp.utility.GetAPIData;
 import com.pb.reminderapp.utility.LazyAdapter;
+import com.pb.reminderapp.utility.PreferencesUtils;
 
 import android.Manifest;
 import android.accounts.AccountManager;
@@ -52,6 +53,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -113,6 +115,24 @@ public class MainActivity extends Activity
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
 
+
+        ImageView printImageView = findViewById(R.id.printLabels);
+
+        printImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                List<EventInfo> selectedEventInfo = new ArrayList<EventInfo>();
+                for (EventInfo eventInfo : adapter.getData()) {
+                    if (eventInfo.isEnabled()) {
+                        selectedEventInfo.add(eventInfo);
+                    }
+                }
+                PreferencesUtils.setSelectedEventInfo(selectedEventInfo);
+                Intent intent = new Intent(getContext(), PrintPriviewActivity.class);
+                getContext().startActivity(intent);
+            }
+        });
 
         listView = (ListView) findViewById(R.id.list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -319,7 +339,7 @@ public class MainActivity extends Activity
                     EventInfo eventInfo = new EventInfo();
                     // For simplicity assume event description contains all information required for getting details
                     // Mocked response, use getRates() method for real time response
-                    EventDescription eventDescriptionJson =  convertStringToJson(eventDetails.getEventDescription());
+                    EventDescription eventDescriptionJson = convertStringToJson(eventDetails.getEventDescription());
                     rateResponse = GetAPIData.getRates(eventDescriptionJson.getRateRequest());
                     //rateResponse = GetAPIData.getDummyRates(eventDetails.getEventDescription());
                     eventInfo = appService.processResponse(rateResponse, eventDetails, eventDescriptionJson.getDeliveryDate());
@@ -336,8 +356,6 @@ public class MainActivity extends Activity
                 return null;
             }
         }
-
-
 
 
         @Override

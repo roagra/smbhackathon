@@ -34,7 +34,7 @@
         android:textSize="@dimen/sp_16" />
 
     <ImageView
-        android:id="@+id/sendMail"
+        android:id="@+id/printLabels"
         android:layout_width="@dimen/dp_50"
         android:layout_height="@dimen/dp_110"
         android:paddingTop="@dimen/dp_10"
@@ -42,7 +42,7 @@
         android:paddingBottom="@dimen/dp_10"
         android:background="@color/pb_purple_500"
         android:scaleType="fitCenter"
-        android:src="@drawable/mail" />
+        android:src="@drawable/print" />
 
     <View
         android:layout_width="match_parent"

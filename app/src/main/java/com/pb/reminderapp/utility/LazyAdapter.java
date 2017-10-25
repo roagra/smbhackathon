@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.pb.reminderapp.PrintPriviewActivity;
@@ -53,7 +55,7 @@ public class LazyAdapter extends BaseAdapter {
 
         TextView title = (TextView) vi.findViewById(R.id.title); // title
         TextView address = (TextView) vi.findViewById(R.id.address); // To Address
-        TextView recommendation = (TextView) vi.findViewById(R.id.recommendation); // artist name
+        //TextView recommendation = (TextView) vi.findViewById(R.id.recommendation); // artist name
         TextView duration = (TextView) vi.findViewById(R.id.duration); // duration
 
 
@@ -62,36 +64,86 @@ public class LazyAdapter extends BaseAdapter {
         // Setting all values in listview
         ImageView thumb_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
         Drawable myDrawable = activity.getResources().getDrawable(R.drawable.todo);
+
+
+        CheckBox enabledCheckBox = vi.findViewById(R.id.enabled); // thumb image
         thumb_image.setImageDrawable(myDrawable);
 //        if (notification.get() == 1) {
 //            myDrawable = activity.getResources().getDrawable(R.drawable.red_alert);
 //            thumb_image.setImageDrawable(myDrawable);
 //        }
-        title.setText(eventInfo.getEventTitle());
-        address.setText(eventInfo.getToAddress());
-        recommendation.setText(eventInfo.getSuggestion());
-        duration.setText(eventInfo.getUserDeliveryDateTime());
-        ImageView mapViewLink = (ImageView) vi.findViewById(R.id.detailViewLink); // thumb image
-        mapViewLink.setOnClickListener(new View.OnClickListener() {
+        enabledCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (view.isEnabled()) {
+                    eventInfo.setEnabled(true);
+                } else {
+                    eventInfo.setEnabled(false);
+                }
 
-                Intent intent = new Intent(view.getContext(), PrintPriviewActivity.class);
-                view.getContext().startActivity(intent);
             }
         });
+        title.setText(eventInfo.getEventTitle());
+        address.setText(eventInfo.getToAddress());
+        //recommendation.setText(eventInfo.getSuggestion());
+        duration.setText(eventInfo.getUserDeliveryDateTime());
 
-        vi.setOnClickListener(new View.OnClickListener() {
+        RadioButton standard = vi.findViewById(R.id.standard);
+        RadioButton fm = vi.findViewById(R.id.fmRadio);
+        RadioButton pm = vi.findViewById(R.id.pmRadio);
+
+        standard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                {
-
-//                    Intent intent = new Intent(view.getContext(), TransactionDetailsActivity.class);
-//                    view.getContext().startActivity(intent);
+                if (view.isEnabled()) {
+                    eventInfo.getStandardShippingOption().setSelected(true);
+                    eventInfo.getFmShippingOption().setSelected(false);
+                    eventInfo.getPmShippingOption().setSelected(false);
                 }
             }
         });
 
+        fm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (view.isEnabled()) {
+                    eventInfo.getStandardShippingOption().setSelected(false);
+                    eventInfo.getFmShippingOption().setSelected(true);
+                    eventInfo.getPmShippingOption().setSelected(false);
+                }
+            }
+        });
+        pm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (view.isEnabled()) {
+                    eventInfo.getStandardShippingOption().setSelected(false);
+                    eventInfo.getFmShippingOption().setSelected(false);
+                    eventInfo.getPmShippingOption().setSelected(true);
+                }
+            }
+        });
+
+        if (eventInfo.getStandardShippingOption() != null) {
+            standard.setVisibility(View.VISIBLE);
+            standard.setText(eventInfo.getStandardShippingOption().getNote());
+        } else {
+            standard.setVisibility(View.INVISIBLE);
+        }
+
+        if (eventInfo.getPmShippingOption() != null) {
+            pm.setVisibility(View.VISIBLE);
+            pm.setText(eventInfo.getPmShippingOption().getNote());
+        } else {
+            pm.setVisibility(View.INVISIBLE);
+        }
+
+        if (eventInfo.getFmShippingOption() != null) {
+            fm.setVisibility(View.VISIBLE);
+            fm.setText(eventInfo.getFmShippingOption().getNote());
+        } else {
+            fm.setVisibility(View.INVISIBLE);
+        }
 
         return vi;
     }

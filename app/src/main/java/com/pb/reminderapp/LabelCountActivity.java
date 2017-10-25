@@ -107,27 +107,29 @@ public class LabelCountActivity extends Activity {
         SimpleDateFormat dt = new SimpleDateFormat("yyyyy-mm-dd");
         String currentDate = dt.format(date);
 
-        labelCounts.add(new LabelCount(currentDate, 20));
+        labelCounts.add(new LabelCount("Date ", "Label Count"));
+
+        labelCounts.add(new LabelCount(currentDate, ""+20));
 
         calender.add(Calendar.DATE, -1);
         currentDate = dt.format(calender.getTime());
-        labelCounts.add(new LabelCount(currentDate, 12));
+        labelCounts.add(new LabelCount(currentDate, ""+12));
 
         calender.add(Calendar.DATE, -1);
         currentDate = dt.format(calender.getTime());
-        labelCounts.add(new LabelCount(currentDate, 23));
+        labelCounts.add(new LabelCount(currentDate, ""+23));
 
         calender.add(Calendar.DATE, -1);
         currentDate = dt.format(calender.getTime());
-        labelCounts.add(new LabelCount(currentDate, 15));
+        labelCounts.add(new LabelCount(currentDate, ""+15));
 
         calender.add(Calendar.DATE, -1);
         currentDate = dt.format(calender.getTime());
-        labelCounts.add(new LabelCount(currentDate, 18));
+        labelCounts.add(new LabelCount(currentDate, ""+18));
 
         calender.add(Calendar.DATE, -1);
         currentDate = dt.format(calender.getTime());
-        labelCounts.add(new LabelCount(currentDate, 24));
+        labelCounts.add(new LabelCount(currentDate, ""+24));
 
         return labelCounts;
     }
@@ -136,13 +138,13 @@ public class LabelCountActivity extends Activity {
     public static class LabelCount {
 
         private String dateRange;
-        private int count;
+        private String count;
 
         public LabelCount() {
 
         }
 
-        public LabelCount(String dateRange, int count) {
+        public LabelCount(String dateRange, String count) {
             this.dateRange = dateRange;
             this.count = count;
         }
@@ -155,11 +157,11 @@ public class LabelCountActivity extends Activity {
             this.dateRange = dateRange;
         }
 
-        public int getCount() {
+        public String getCount() {
             return count;
         }
 
-        public void setCount(int count) {
+        public void setCount(String count) {
             this.count = count;
         }
     }

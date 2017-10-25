@@ -11,6 +11,83 @@ import java.util.List;
 public class EventInfo {
 
     private String eventTitle;
+    private boolean isEnabled;
+    private String eventId;
+    private ShipingOption standardShippingOption;
+    private ShipingOption pmShippingOption;
+    private ShipingOption fmShippingOption;
+
+    public ShipingOption getStandardShippingOption() {
+        return standardShippingOption;
+    }
+
+    public void setStandardShippingOption(ShipingOption standardShippingOption) {
+        this.standardShippingOption = standardShippingOption;
+    }
+
+    public ShipingOption getPmShippingOption() {
+        return pmShippingOption;
+    }
+
+    public void setPmShippingOption(ShipingOption pmShippingOption) {
+        this.pmShippingOption = pmShippingOption;
+    }
+
+    public ShipingOption getFmShippingOption() {
+        return fmShippingOption;
+    }
+
+    public void setFmShippingOption(ShipingOption fmShippingOption) {
+        this.fmShippingOption = fmShippingOption;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+
+
+    public static class ShipingOption{
+        private String mailClass;
+        private String note;
+        private boolean isSelected;
+
+        public String getMailClass() {
+            return mailClass;
+        }
+
+        public void setMailClass(String mailClass) {
+            this.mailClass = mailClass;
+        }
+
+        public String getNote() {
+            return note;
+        }
+
+        public void setNote(String note) {
+            this.note = note;
+        }
+
+        public boolean isSelected() {
+            return isSelected;
+        }
+
+        public void setSelected(boolean selected) {
+            isSelected = selected;
+        }
+    }
 
     private List<ShipmentDetail> ShipmentDetails;
 

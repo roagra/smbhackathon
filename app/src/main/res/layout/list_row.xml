@@ -15,6 +15,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginRight="5dip"
         android:background="@color/white"
+        android:orientation="vertical"
         android:padding="3dip">
 
         <ImageView
@@ -22,6 +23,11 @@
             android:layout_width="50dip"
             android:layout_height="50dip"
             android:src="@drawable/images" />
+
+        <CheckBox
+            android:id="@+id/enabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -32,8 +38,8 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="0.85"
             android:layout_height="match_parent"
+            android:layout_weight="0.85"
 
             android:orientation="vertical">
 
@@ -57,21 +63,37 @@
                 android:text="Just gona stand there and ..."
                 android:textColor="#343434"
                 android:textSize="12dip" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/recommendation"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dip"
-                android:text="Just gona stand there and ..."
-                android:textColor="#343434"
-                android:textSize="10dip" />
+                <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <RadioButton android:id="@+id/standard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Standard"/>
+                    <RadioButton android:id="@+id/fmRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FM"/>
+                    <RadioButton android:id="@+id/pmRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FM"/>
+                </RadioGroup>
+
+
+
+                </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="0.15"
             android:layout_height="match_parent"
+            android:layout_weight="0.15"
             android:orientation="vertical">
 
 
@@ -88,13 +110,7 @@
                 android:textSize="12dip"
                 android:textStyle="bold" />
 
-            <ImageView
-                android:id="@+id/detailViewLink"
-                android:layout_width="@dimen/dp_50"
-                android:layout_height="@dimen/dp_50"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/print" />
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

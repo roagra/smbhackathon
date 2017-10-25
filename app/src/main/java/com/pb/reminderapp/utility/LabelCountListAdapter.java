@@ -54,7 +54,7 @@ public class LabelCountListAdapter extends BaseAdapter {
         TextView address = (TextView) vi.findViewById(R.id.countValue);
         final LabelCountActivity.LabelCount labelCount = data.get(position);
         dateRange.setText(labelCount.getDateRange());
-        //address.setText(labelCount.getCount());
+        address.setText(labelCount.getCount());
         return vi;
     }
 

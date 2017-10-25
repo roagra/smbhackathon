@@ -2,6 +2,10 @@ package com.pb.reminderapp.utility;
 
 import android.content.SharedPreferences;
 
+import com.pb.reminderapp.model.EventInfo;
+
+import java.util.List;
+
 
 /**
  * Created by gr016ma on 9/27/2017.
@@ -15,6 +19,16 @@ public class PreferencesUtils {
     private static final String EMAIL_ID = "emailId";
     public static final String HACK_PREFERENCES = "HACK_PREF";
     private static SharedPreferences sharedpreferences;
+    private static List<EventInfo> selectedEventInfo;
+
+    public static List<EventInfo> getSelectedEventInfo() {
+        return selectedEventInfo;
+    }
+
+    public static void setSelectedEventInfo(List<EventInfo> selectedEventInfo) {
+        PreferencesUtils.selectedEventInfo = selectedEventInfo;
+    }
+
     public static SharedPreferences getSharedpreferences() {
         return sharedpreferences;
     }
