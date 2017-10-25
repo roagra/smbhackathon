@@ -74,15 +74,18 @@
                     <RadioButton android:id="@+id/standard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Standard"/>
+                        android:text="Standard"
+                        android:textSize="9dip"/>
                     <RadioButton android:id="@+id/fmRadio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FM"/>
+                        android:text="FM"
+                        android:textSize="9dip"/>
                     <RadioButton android:id="@+id/pmRadio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FM"/>
+                        android:text="FM"
+                        android:textSize="9dip"/>
                 </RadioGroup>
 
 

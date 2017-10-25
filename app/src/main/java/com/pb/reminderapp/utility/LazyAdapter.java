@@ -1,7 +1,6 @@
 package com.pb.reminderapp.utility;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +11,8 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.pb.reminderapp.PrintPriviewActivity;
 import com.pb.reminderapp.R;
-import com.pb.reminderapp.model.EventDetails;
 import com.pb.reminderapp.model.EventInfo;
-import com.pb.reminderapp.model.RateRequest;
 
 import java.util.List;
 

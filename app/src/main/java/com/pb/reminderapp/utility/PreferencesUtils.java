@@ -2,6 +2,7 @@ package com.pb.reminderapp.utility;
 
 import android.content.SharedPreferences;
 
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.pb.reminderapp.model.EventInfo;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class PreferencesUtils {
     public static final String HACK_PREFERENCES = "HACK_PREF";
     private static SharedPreferences sharedpreferences;
     private static List<EventInfo> selectedEventInfo;
+    private static GoogleAccountCredential credentials;
 
     public static List<EventInfo> getSelectedEventInfo() {
         return selectedEventInfo;
@@ -58,5 +60,13 @@ public class PreferencesUtils {
 
     public static boolean isRegistrationExist() {
         return sharedpreferences.getBoolean(ALREADY_REGISTERED, false);
+    }
+
+    public static void setCredentials(GoogleAccountCredential credentials) {
+        PreferencesUtils.credentials = credentials;
+    }
+
+    public static GoogleAccountCredential getCredentials() {
+        return credentials;
     }
 }

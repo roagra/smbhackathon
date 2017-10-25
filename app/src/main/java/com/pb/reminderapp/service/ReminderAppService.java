@@ -11,6 +11,7 @@ import com.pb.reminderapp.model.PostCodeResponse;
 import com.pb.reminderapp.model.RateRequest;
 import com.pb.reminderapp.model.RateResponse;
 import com.pb.reminderapp.utility.GetAPIData;
+import com.pb.reminderapp.utility.PreferencesUtils;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -85,11 +86,14 @@ public class ReminderAppService {
     }
 
 
-    public EventInfo prepareSuggestion(RateResponse rateResponse, EventDetails eventDetails, String requiredDeliveryDate){
+    public EventInfo prepareSuggestion(RateResponse rateResponse, EventDetails eventDetails) throws ParseException {
         Map<String,DeliveryInfo> dayAndRateMap = new HashMap<>();
         EventInfo eventInfo = new EventInfo();
+        String requiredDeliveryDate = eventDetails.getEventStartDate();
         eventInfo.setEventTitle(eventDetails.getEventTitle());
-        eventInfo.setUserDeliveryDateTime(requiredDeliveryDate);
+        eventInfo.setUserDeliveryDateTime(new SimpleDateFormat("yyyy-MM-dd").parse(requiredDeliveryDate).toString());
+        eventInfo.setEventId(eventDetails.getEventId());
+        eventInfo.setToAddress(eventDetails.getToAddress());
         List<EventInfo.ShippingOption> shippingOptions = new ArrayList<>();
         for (RateResponse.Rate rate : rateResponse.getRates()){
             if ((rate.getRateTypeId().equals("RETAIL") || rate.getRateTypeId().equals("CONTRACT_RATES") || rate.getRateTypeId().equals("COMMERCIAL_BASE"))){
@@ -106,25 +110,23 @@ public class ReminderAppService {
         if (dateCheckMailClass("STDPOST", requiredDeliveryDate, dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate())){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("STDPOST");
-            shippingOption.setNote("If package shipped today it will be delivered by " + dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate()  + " in $" + dayAndRateMap.get("STDPOST").getTotalCarrierCharge() + "through STDPOST" );
-            shippingOptions.add(shippingOption);
+            shippingOption.setNote("Mail Class : Standard Post, Estimated Delivery Date : " + dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("STDPOST").getTotalCarrierCharge());
+            eventInfo.setStandardShippingOption(shippingOption);
         }
 
         if (dateCheckMailClass("FCM", requiredDeliveryDate, dayAndRateMap.get("FCM").getEstimatedDeliveryDate())){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("FCM");
-            shippingOption.setNote("If package shipped today it will be delivered by " + dayAndRateMap.get("FCM").getEstimatedDeliveryDate()  + " in $" + dayAndRateMap.get("FCM").getTotalCarrierCharge() + "through FCM" );
-            shippingOptions.add(shippingOption);
+            shippingOption.setNote("Mail Class : First Class, Estimated Delivery Date : " + dayAndRateMap.get("FCM").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("FCM").getTotalCarrierCharge());
+            eventInfo.setFmShippingOption(shippingOption);
         }
 
         if (dateCheckMailClass("PM", requiredDeliveryDate, dayAndRateMap.get("PM").getEstimatedDeliveryDate())){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("PM");
-            shippingOption.setNote("If package shipped today it will be delivered by " + dayAndRateMap.get("PM").getEstimatedDeliveryDate()  + " in $" + dayAndRateMap.get("PM").getTotalCarrierCharge() + "through PM" );
-            shippingOptions.add(shippingOption);
+            shippingOption.setNote("Mail Class : Priority Mail, Estimated Delivery Date : " + dayAndRateMap.get("PM").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("PM").getTotalCarrierCharge());
+            eventInfo.setPmShippingOption(shippingOption);
         }
-        eventInfo.setShippingOptions(shippingOptions);
-
         return eventInfo;
     }
 
@@ -317,10 +319,10 @@ public class ReminderAppService {
         return sb.toString();
     }
 
-    public RateRequest prepareRateAndShipmentRequest(EventDetails eventDetails, String serviceId) {
+    public RateRequest prepareRateAndShipmentRequest(String toAddressFromEvent , String serviceId) {
         RateRequest rateRequest = new RateRequest();
-        PostCodeResponse toAddress = GetAPIData.getPostCode(eventDetails.getToAddress());
-        PostCodeResponse fromAddress = GetAPIData.getPostCode(eventDetails.getToAddress());
+        PostCodeResponse toAddress = GetAPIData.getPostCode(toAddressFromEvent);
+        PostCodeResponse fromAddress = GetAPIData.getPostCode(PreferencesUtils.getAddress());
 
         // Setting From Address
         RateRequest.Address fromAddressObj = new RateRequest.Address();

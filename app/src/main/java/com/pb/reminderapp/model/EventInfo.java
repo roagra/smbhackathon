@@ -1,7 +1,5 @@
 package com.pb.reminderapp.model;
 
-import android.widget.ImageView;
-
 import java.util.List;
 
 /**
@@ -11,33 +9,38 @@ import java.util.List;
 public class EventInfo {
 
     private String eventTitle;
-    private boolean isEnabled;
-    private String eventId;
-    private ShipingOption standardShippingOption;
-    private ShipingOption pmShippingOption;
-    private ShipingOption fmShippingOption;
 
-    public ShipingOption getStandardShippingOption() {
+    private boolean isEnabled;
+
+    private String eventId;
+
+    private ShippingOption standardShippingOption;
+
+    private ShippingOption pmShippingOption;
+
+    private ShippingOption fmShippingOption;
+
+    public ShippingOption getStandardShippingOption() {
         return standardShippingOption;
     }
 
-    public void setStandardShippingOption(ShipingOption standardShippingOption) {
+    public void setStandardShippingOption(ShippingOption standardShippingOption) {
         this.standardShippingOption = standardShippingOption;
     }
 
-    public ShipingOption getPmShippingOption() {
+    public ShippingOption getPmShippingOption() {
         return pmShippingOption;
     }
 
-    public void setPmShippingOption(ShipingOption pmShippingOption) {
+    public void setPmShippingOption(ShippingOption pmShippingOption) {
         this.pmShippingOption = pmShippingOption;
     }
 
-    public ShipingOption getFmShippingOption() {
+    public ShippingOption getFmShippingOption() {
         return fmShippingOption;
     }
 
-    public void setFmShippingOption(ShipingOption fmShippingOption) {
+    public void setFmShippingOption(ShippingOption fmShippingOption) {
         this.fmShippingOption = fmShippingOption;
     }
 
@@ -59,7 +62,7 @@ public class EventInfo {
 
 
 
-    public static class ShipingOption{
+    public static class ShippingOption {
         private String mailClass;
         private String note;
         private boolean isSelected;

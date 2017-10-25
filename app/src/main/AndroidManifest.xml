@@ -27,7 +27,7 @@
             android:name=".MainActivity"
             android:label="Reminder App through Google Calendar API Android"
             android:screenOrientation="landscape" />
-        <activity android:name=".PrintPriviewActivity" android:screenOrientation="landscape" ></activity>
+        <activity android:name=".PrintPreviewActivity" android:screenOrientation="landscape" ></activity>
         <activity android:name=".RegistrationActivity" android:screenOrientation="landscape" ></activity>
         <activity android:name=".LabelCountActivity" android:screenOrientation="landscape" ></activity>
 

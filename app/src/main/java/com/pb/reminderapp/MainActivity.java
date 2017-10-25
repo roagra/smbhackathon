@@ -17,12 +17,8 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.ExponentialBackOff;
 
 import com.google.api.services.calendar.CalendarScopes;
-import com.google.api.client.util.DateTime;
 
-import com.google.api.services.calendar.model.*;
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.pb.reminderapp.model.EventDescription;
 import com.pb.reminderapp.model.EventDetails;
 import com.pb.reminderapp.model.EventInfo;
@@ -47,21 +43,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -84,8 +70,6 @@ public class MainActivity extends Activity
 
 
     GoogleAccountCredential mCredential;
-    //    private TextView mOutputText;
-//    private Button mCallApiButton;
     ProgressDialog mProgress;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
@@ -97,11 +81,6 @@ public class MainActivity extends Activity
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = {CalendarScopes.CALENDAR};
 
-    /**
-     * Create the main activity.
-     *
-     * @param savedInstanceState previously saved instance data.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,7 +108,8 @@ public class MainActivity extends Activity
                     }
                 }
                 PreferencesUtils.setSelectedEventInfo(selectedEventInfo);
-                Intent intent = new Intent(getContext(), PrintPriviewActivity.class);
+                PreferencesUtils.setCredentials(mCredential);
+                Intent intent = new Intent(getContext(), PrintPreviewActivity.class);
                 getContext().startActivity(intent);
             }
         });
@@ -149,19 +129,6 @@ public class MainActivity extends Activity
         listView.setAdapter(adapter);
         mProgress.show();
         getResultsFromApi();
-
-
-        //handler.postDelayed(runnable, 10000);
-//        this.runOnUiThread(runnable);
-
-//        mProgress = new ProgressDialog(this);
-//        mProgress.setMessage("Calling Google Calendar API ...");
-
-
-/*        // Initialize credentials and service object.
-        mCredential = GoogleAccountCredential.usingOAuth2(
-                getApplicationContext(), Arrays.asList(SCOPES))
-                .setBackOff(new ExponentialBackOff());*/
     }
 
 
@@ -171,25 +138,12 @@ public class MainActivity extends Activity
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            //mOutputText.setText("No network connection available.");
         } else {
 
-//            mProgress.setMessage("Calling Google Calendar API ...");
             new MakeRequestTask(mCredential).execute();
         }
     }
 
-
-/*    private final Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            getResultsFromApi();
-            adapter.notifyDataSetChanged();
-            listView.invalidateViews();
-            listView.refreshDrawableState();
-            handler.postDelayed(runnable, 10000);
-        }
-    };*/
 
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
     private void chooseAccount() {
@@ -201,13 +155,11 @@ public class MainActivity extends Activity
                 mCredential.setSelectedAccountName(accountName);
                 getResultsFromApi();
             } else {
-                // Start a dialog from which the user can choose an account
                 startActivityForResult(
                         mCredential.newChooseAccountIntent(),
                         REQUEST_ACCOUNT_PICKER);
             }
         } else {
-            // Request the GET_ACCOUNTS permission via a user dialog
             EasyPermissions.requestPermissions(
                     this,
                     "This app needs to access your Google account (via Contacts).",
@@ -223,8 +175,7 @@ public class MainActivity extends Activity
         switch (requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-//                    mOutputText.setText(
-//                            "App requires Google Play Services.");
+
                 } else {
                     getResultsFromApi();
                 }
@@ -321,11 +272,6 @@ public class MainActivity extends Activity
                     .build();
         }
 
-        /**
-         * Background task to call Google Calendar API.
-         *
-         * @param params no parameters needed for this task.
-         */
         @Override
         protected List<EventInfo> doInBackground(Void... params) {
             RateResponse rateResponse;
@@ -337,15 +283,11 @@ public class MainActivity extends Activity
                 List<EventDetails> details = appService.getDataFromApi(mService);
                 for (EventDetails eventDetails : details) {
                     EventInfo eventInfo = new EventInfo();
-                    // For simplicity assume event description contains all information required for getting details
-                    // Mocked response, use getRates() method for real time response
-                    EventDescription eventDescriptionJson = convertStringToJson(eventDetails.getEventDescription());
-                    rateResponse = GetAPIData.getRates(eventDescriptionJson.getRateRequest());
-                    //rateResponse = GetAPIData.getDummyRates(eventDetails.getEventDescription());
-                    eventInfo = appService.processResponse(rateResponse, eventDetails, eventDescriptionJson.getDeliveryDate());
-                    //JSONObject jsonObject =  new JSONObject(eventDetails.getEventDescription());
-                    //rateRequest = g.fromJson(jsonObject.toString(), RateRequest.class);
-//                    allEvents.add(eventInfo);
+                    rateRequest = appService.prepareRateAndShipmentRequest(eventDetails.getToAddress(), "");
+                    rateResponse = GetAPIData.getRates(rateRequest);
+                    eventInfo = appService.prepareSuggestion(rateResponse, eventDetails);
+                    //RateRequest shipmentRequest =  appService.prepareRateAndShipmentRequest(eventDetails, "PM");
+                    //RateResponse shipmentResponse = GetAPIData.getShipmentLabel(shipmentRequest);
                     listEventInfo.add(eventInfo);
                 }
                 return listEventInfo;
@@ -375,12 +317,6 @@ public class MainActivity extends Activity
             }
         }
 
-        private EventDescription convertStringToJson(String eventDescription) {
-            Gson g = new Gson();
-            EventDescription eventDescriptionObj = g.fromJson(eventDescription, EventDescription.class);
-            return eventDescriptionObj;
-        }
-
         @Override
         protected void onCancelled() {
 
@@ -394,11 +330,9 @@ public class MainActivity extends Activity
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
                             MainActivity.REQUEST_AUTHORIZATION);
                 } else {
-//                    mOutputText.setText("The following error occurred:\n"
-//                            + mLastError.getMessage());
+
                 }
             } else {
-//                mOutputText.setText("Request cancelled.");
             }
         }
     }
