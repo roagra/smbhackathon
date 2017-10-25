@@ -6,13 +6,43 @@ package com.pb.reminderapp.model;
 
 public class EventDetails {
 
+    private String eventId;
+
     private String eventTitle;
 
     private String eventStartDate;
 
     private String eventDescription;
 
+    private String toAddress;
+
+    private String eventStatus;
+
     private RateRequest rateRequest;
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getToAddress() {
+        return toAddress;
+    }
+
+    public void setToAddress(String toAddress) {
+        this.toAddress = toAddress;
+    }
+
+    public String getEventStatus() {
+        return eventStatus;
+    }
+
+    public void setEventStatus(String eventStatus) {
+        this.eventStatus = eventStatus;
+    }
 
     public RateRequest getRateRequest() {
         return rateRequest;

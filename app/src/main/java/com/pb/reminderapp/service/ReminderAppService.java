@@ -7,8 +7,10 @@ import com.google.api.services.calendar.model.EventReminder;
 import com.google.api.services.calendar.model.Events;
 import com.pb.reminderapp.model.EventDetails;
 import com.pb.reminderapp.model.EventInfo;
+import com.pb.reminderapp.model.PostCodeResponse;
 import com.pb.reminderapp.model.RateRequest;
 import com.pb.reminderapp.model.RateResponse;
+import com.pb.reminderapp.utility.GetAPIData;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -43,48 +45,142 @@ public class ReminderAppService {
     public List<EventDetails> getDataFromApi(com.google.api.services.calendar.Calendar mService) throws IOException {
         //DateTime now = new DateTime(System.currentTimeMillis());
         Date dateTomorrow = new Date();
-        Date date15Days = new Date();
+        Date date9Days = new Date();
         Calendar calTomorrow = Calendar.getInstance();
         calTomorrow.setTime(dateTomorrow);
         calTomorrow.add(Calendar.DATE, 1);
         dateTomorrow = calTomorrow.getTime();
-        Calendar cal15Days = Calendar.getInstance();
-        cal15Days.setTime(date15Days);
-        cal15Days.add(Calendar.DATE, 15);
-        date15Days = cal15Days.getTime();
+        Calendar cal9Days = Calendar.getInstance();
+        cal9Days.setTime(date9Days);
+        cal9Days.add(Calendar.DATE, 15);
+        date9Days = cal9Days.getTime();
 
         List<EventDetails> listEventDetails = new ArrayList<>();
         Events events = mService.events().list("primary")
                 .setMaxResults(100)
                 .setTimeMin( new DateTime(dateTomorrow))
-                .setTimeMax(new DateTime(date15Days))
+                .setTimeMax(new DateTime(date9Days))
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();
         List<Event> items = events.getItems();
 
         for (Event event : items) {
-            EventDetails eventDetails = new EventDetails();
-            DateTime start = event.getStart().getDateTime();
-            if (start == null) {
-                start = event.getStart().getDate();
+            if (event.getStatus().equalsIgnoreCase("confirmed")) {
+                EventDetails eventDetails = new EventDetails();
+                DateTime start = event.getStart().getDateTime();
+                if (start == null) {
+                    start = event.getStart().getDate();
+                }
+                eventDetails.setEventId(event.getId());
+                eventDetails.setEventStartDate(start.toString());
+                eventDetails.setEventDescription(event.getDescription());
+                eventDetails.setEventTitle(event.getSummary());
+                eventDetails.setToAddress(event.getLocation());
+                eventDetails.setEventStatus(event.getStatus());
+                listEventDetails.add(eventDetails);
             }
-            eventDetails.setEventStartDate(start.toString());
-            eventDetails.setEventDescription(event.getDescription());
-            eventDetails.setEventTitle(event.getSummary());
-            listEventDetails.add(eventDetails);
         }
         return listEventDetails;
     }
 
 
-    public EventInfo processResponse(RateResponse rateResponse, EventDetails eventDetails, String requiredDeliveryDate ) {
+    public EventInfo prepareSuggestion(RateResponse rateResponse, EventDetails eventDetails, String requiredDeliveryDate){
+        Map<String,DeliveryInfo> dayAndRateMap = new HashMap<>();
+        EventInfo eventInfo = new EventInfo();
+        eventInfo.setEventTitle(eventDetails.getEventTitle());
+        eventInfo.setUserDeliveryDateTime(requiredDeliveryDate);
+        List<EventInfo.ShippingOption> shippingOptions = new ArrayList<>();
+        for (RateResponse.Rate rate : rateResponse.getRates()){
+            if ((rate.getRateTypeId().equals("RETAIL") || rate.getRateTypeId().equals("CONTRACT_RATES") || rate.getRateTypeId().equals("COMMERCIAL_BASE"))){
+                if (rate.getServiceId().equals("FCM") || rate.getServiceId().equals("PM") || rate.getServiceId().equals("STDPOST")) {
+                    DeliveryInfo deliveryInfo = new DeliveryInfo();
+                    deliveryInfo.setDays(Integer.valueOf(rate.getDeliveryCommitment().getMaxEstimatedNumberOfDays()));
+                    deliveryInfo.setEstimatedDeliveryDate(rate.getDeliveryCommitment().getEstimatedDeliveryDateTime());
+                    deliveryInfo.setTotalCarrierCharge(rate.getTotalCarrierCharge());
+                    dayAndRateMap.put(rate.getServiceId(), deliveryInfo);
+                }
+            }
+        }
+
+        if (dateCheckMailClass("STDPOST", requiredDeliveryDate, dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate())){
+            EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
+            shippingOption.setMailClass("STDPOST");
+            shippingOption.setNote("If package shipped today it will be delivered by " + dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate()  + " in $" + dayAndRateMap.get("STDPOST").getTotalCarrierCharge() + "through STDPOST" );
+            shippingOptions.add(shippingOption);
+        }
+
+        if (dateCheckMailClass("FCM", requiredDeliveryDate, dayAndRateMap.get("FCM").getEstimatedDeliveryDate())){
+            EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
+            shippingOption.setMailClass("FCM");
+            shippingOption.setNote("If package shipped today it will be delivered by " + dayAndRateMap.get("FCM").getEstimatedDeliveryDate()  + " in $" + dayAndRateMap.get("FCM").getTotalCarrierCharge() + "through FCM" );
+            shippingOptions.add(shippingOption);
+        }
+
+        if (dateCheckMailClass("PM", requiredDeliveryDate, dayAndRateMap.get("PM").getEstimatedDeliveryDate())){
+            EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
+            shippingOption.setMailClass("PM");
+            shippingOption.setNote("If package shipped today it will be delivered by " + dayAndRateMap.get("PM").getEstimatedDeliveryDate()  + " in $" + dayAndRateMap.get("PM").getTotalCarrierCharge() + "through PM" );
+            shippingOptions.add(shippingOption);
+        }
+        eventInfo.setShippingOptions(shippingOptions);
+
+        return eventInfo;
+    }
+
+    private boolean dateCheckMailClass(String mailClass, String requiredDeliveryDate, String estimatedDeliveryDateTime) {
+        Date requiredDeliveryDateD = null;
+        Date estimatedDeliveryDateTimeD = null;
+        try {
+            requiredDeliveryDateD = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(requiredDeliveryDate);
+            estimatedDeliveryDateTimeD = new SimpleDateFormat("yyyy-MM-dd").parse(estimatedDeliveryDateTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (mailClass.equals("STDPOST")){
+            Calendar c = Calendar.getInstance();
+            c.setTime(estimatedDeliveryDateTimeD);
+            c.add(Calendar.DATE, 1);
+            Date estimatedDeliveryDateTimePlusOne = c.getTime();
+            if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD)){
+                if (requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne))
+                return false;
+            }
+        }
+
+        if (mailClass.equals("FCM")){
+            Calendar c = Calendar.getInstance();
+            c.setTime(estimatedDeliveryDateTimeD);
+            c.add(Calendar.DATE, 1);
+            Date estimatedDeliveryDateTimePlusOne = c.getTime();
+            if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD)){
+                if (requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne))
+                    return false;
+            }
+        }
+
+        if (mailClass.equals("PM")){
+            Calendar c = Calendar.getInstance();
+            c.setTime(estimatedDeliveryDateTimeD);
+            c.add(Calendar.DATE, 1);
+            Date estimatedDeliveryDateTimePlusOne = c.getTime();
+            if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD)){
+                if (requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    public EventInfo processResponse(RateResponse rateResponse, EventDetails eventDetails, String requiredDeliveryDate) {
         EventInfo eventInfo = new EventInfo();
         Map<Integer,Double> dayAndRateMap = new HashMap<>();
         eventInfo.setEventTitle(eventDetails.getEventTitle());
         List<EventInfo.ShipmentDetail> shipmentDetails = new ArrayList<>();
         for (RateResponse.Rate rate : rateResponse.getRates()){
-            if ((rate.getRateTypeId().equals("RETAIL") || rate.getRateTypeId().equals("CONTRACT_RATES")) && dateCheck(requiredDeliveryDate, rate.getDeliveryCommitment().getEstimatedDeliveryDateTime())) {
+            if ((rate.getRateTypeId().equals("RETAIL") || rate.getRateTypeId().equals("CONTRACT_RATES") || rate.getRateTypeId().equals("COMMERCIAL_BASE")) && dateCheck(requiredDeliveryDate, rate.getDeliveryCommitment().getEstimatedDeliveryDateTime())) {
                 EventInfo.ShipmentDetail shipmentDetail = new EventInfo.ShipmentDetail();
                 shipmentDetail.setEstimatedDeliveryDateTime(rate.getDeliveryCommitment().getEstimatedDeliveryDateTime());
                 shipmentDetail.setShipmentAmount(rate.getTotalCarrierCharge().toString());
@@ -157,7 +253,7 @@ public class ReminderAppService {
         Date requiredDeliveryDateD = null;
         Date estimatedDeliveryDateTimeD = null;
         try {
-            requiredDeliveryDateD = new SimpleDateFormat("MM-dd-yyyy").parse(requiredDeliveryDate);
+            requiredDeliveryDateD = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(requiredDeliveryDate);
             estimatedDeliveryDateTimeD = new SimpleDateFormat("yyyy-MM-dd").parse(estimatedDeliveryDateTime);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -220,4 +316,139 @@ public class ReminderAppService {
         }
         return sb.toString();
     }
+
+    public RateRequest prepareRateAndShipmentRequest(EventDetails eventDetails, String serviceId) {
+        RateRequest rateRequest = new RateRequest();
+        PostCodeResponse toAddress = GetAPIData.getPostCode(eventDetails.getToAddress());
+        PostCodeResponse fromAddress = GetAPIData.getPostCode(eventDetails.getToAddress());
+
+        // Setting From Address
+        RateRequest.Address fromAddressObj = new RateRequest.Address();
+        List<String> fromAddressLines = new ArrayList<>();
+        fromAddressLines.add(fromAddress.getMainAddressLine());
+        //fromAddressLines.add(fromAddress.getAddressLastLine());
+        fromAddressObj.setCompany("Pitney Bowes Inc.");
+        fromAddressObj.setName("sender_fname");
+        fromAddressObj.setPhone("2032032033");
+        fromAddressObj.setEmail("sender@email.com");
+        fromAddressObj.setResidential(true);
+        fromAddressObj.setCityTown(fromAddress.getAreaName3());
+        fromAddressObj.setStateProvince(fromAddress.getAreaName1());
+        fromAddressObj.setPostalCode(fromAddress.getPostCode1());
+        fromAddressObj.setCountryCode("US");
+        fromAddressObj.setAddressLines(fromAddressLines);
+
+        // Setting To Address
+        RateRequest.Address toAddressObj = new RateRequest.Address();
+        List<String> toAddressLines = new ArrayList<>();
+        toAddressLines.add(toAddress.getMainAddressLine());
+        //toAddressLines.add(toAddress.getAddressLastLine());
+        toAddressObj.setCompany("XYZ Inc.");
+        toAddressObj.setName("receiver_fname");
+        toAddressObj.setPhone("7777777777");
+        toAddressObj.setEmail("receiver@email.com");
+        toAddressObj.setResidential(true);
+        toAddressObj.setCityTown(toAddress.getAreaName3());
+        toAddressObj.setStateProvince(toAddress.getAreaName1());
+        toAddressObj.setPostalCode(toAddress.getPostCode1());
+        toAddressObj.setCountryCode("US");
+        toAddressObj.setAddressLines(toAddressLines);
+
+        // Set parcel Details
+        RateRequest.Parcel parcel = new RateRequest.Parcel();
+        RateRequest.Parcel.Weight weight = new RateRequest.Parcel.Weight();
+        weight.setUnitOfMeasurement("OZ");
+        weight.setWeight(1);
+        RateRequest.Parcel.Dimension dimension = new RateRequest.Parcel.Dimension();
+        dimension.setUnitOfMeasurement("IN");
+        dimension.setLength(6.0);
+        dimension.setWidth(0.25);
+        dimension.setHeight(4.0);
+        dimension.setIrregularParcelGirth("0.002");
+        parcel.setWeight(weight);
+        parcel.setDimension(dimension);
+
+        // Set rate details
+        List<RateRequest.Rate> rateList = new ArrayList<>();
+        RateRequest.Rate rate = new RateRequest.Rate();
+        rate.setCarrier("usps");
+        rate.setParcelType("PKG");
+        rate.setInductionPostalCode(fromAddress.getPostCode1());
+        rateList.add(rate);
+
+        RateRequest.Document document = new RateRequest.Document();
+        RateRequest.ShipmentOption shipmentOption = new RateRequest.ShipmentOption();
+        RateRequest.Rate.SpecialServices specialServices = new RateRequest.Rate.SpecialServices();
+        RateRequest.Rate.SpecialServices.InputParameters inputParameters = new RateRequest.Rate.SpecialServices.InputParameters();
+        List<RateRequest.Rate.SpecialServices.InputParameters> inputParametersList = new ArrayList<>();
+        List<RateRequest.Rate.SpecialServices> specialServicesList = new ArrayList();
+        List<RateRequest.Document> documents = new ArrayList<>();
+        List<RateRequest.ShipmentOption> shipmentOptions = new ArrayList<>();
+
+        if(!serviceId.isEmpty()){
+
+            document.setType("SHIPPING_LABEL");
+            document.setContentType("URL");
+            document.setSize("DOC_8X11");
+            document.setFileFormat("PDF");
+            document.setPrintDialogOption("NO_PRINT_DIALOG");
+            documents.add(document);
+
+            shipmentOption.setName("SHIPPER_ID");
+            shipmentOption.setValue("9021678263");
+            shipmentOptions.add(shipmentOption);
+
+            inputParameters.setName("INPUT_VALUE");
+            inputParameters.setValue("0");
+            inputParametersList.add(inputParameters);
+
+            specialServices.setInputParameters(inputParametersList);
+            specialServices.setSpecialServiceId("DelCon");
+            specialServicesList.add(specialServices);
+
+            rate.setServiceId(serviceId);
+            rate.setSpecialServices(specialServicesList);
+        }
+
+        rateRequest.setFromAddress(fromAddressObj);
+        rateRequest.setToAddress(toAddressObj);
+        rateRequest.setParcel(parcel);
+        rateRequest.setRates(rateList);
+        rateRequest.setDocuments(documents);
+        rateRequest.setShipmentOptions(shipmentOptions);
+
+        return rateRequest;
+    }
+
+    public static class DeliveryInfo {
+        private Integer days;
+        private String estimatedDeliveryDate;
+        private Double totalCarrierCharge;
+
+        public Integer getDays() {
+            return days;
+        }
+
+        public void setDays(Integer days) {
+            this.days = days;
+        }
+
+        public String getEstimatedDeliveryDate() {
+            return estimatedDeliveryDate;
+        }
+
+        public void setEstimatedDeliveryDate(String estimatedDeliveryDate) {
+            this.estimatedDeliveryDate = estimatedDeliveryDate;
+        }
+
+        public Double getTotalCarrierCharge() {
+            return totalCarrierCharge;
+        }
+
+        public void setTotalCarrierCharge(Double totalCarrierCharge) {
+            this.totalCarrierCharge = totalCarrierCharge;
+        }
+    }
+
+
 }

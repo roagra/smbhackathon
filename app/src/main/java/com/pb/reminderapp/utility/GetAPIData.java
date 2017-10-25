@@ -2,9 +2,11 @@ package com.pb.reminderapp.utility;
 
 import com.google.gson.Gson;
 import com.pb.reminderapp.model.EventDetails;
+import com.pb.reminderapp.model.PostCodeResponse;
 import com.pb.reminderapp.model.RateRequest;
 import com.pb.reminderapp.model.RateResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -29,27 +31,24 @@ public class GetAPIData {
         eventDetails = eventDetailsObj;
     }
 
-    private static String getToken() {
+    private static String getToken(String urlStr , String APIkeySecret) {
         String token = "";
         try {
-            URL url = new URL("https://api-sandbox.pitneybowes.com/oauth/token");
+            URL url = new URL(urlStr);
             String urlParameters = "grant_type=client_credentials";
             byte[] postData = urlParameters.getBytes();
             int postDataLength = postData.length;
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             // Add Request Header
             urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Authorization", "Basic ZENzQXRBa2Y5QXVSS0gxVlk1eFpYdlZrSGJmTWxoUEw6S1l6WjJmTDJIYVJtbFlKQQ==");
+            urlConnection.setRequestProperty("Authorization", "Basic " + APIkeySecret);
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
             urlConnection.setUseCaches(false);
             urlConnection.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
             wr.write(postData);
-
-
             //display what returns the POST request
-
             StringBuilder sb = new StringBuilder();
             int HttpResult = urlConnection.getResponseCode();
             if (HttpResult == HttpURLConnection.HTTP_OK) {
@@ -85,7 +84,7 @@ public class GetAPIData {
             // Add Request Header
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("X-PB-Shipper-Rate-Plan", "");
-            urlConnection.setRequestProperty("Authorization", "Bearer " + getToken());
+            urlConnection.setRequestProperty("Authorization", "Bearer " + getToken("https://api-sandbox.pitneybowes.com/oauth/token" , "ZENzQXRBa2Y5QXVSS0gxVlk1eFpYdlZrSGJmTWxoUEw6S1l6WjJmTDJIYVJtbFlKQQ=="));
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
             urlConnection.setUseCaches(false);
@@ -114,7 +113,100 @@ public class GetAPIData {
         return rateResponse;
     }
 
-    static String responseJson = "{\n" +
+    public static RateResponse getShipmentLabel(RateRequest rateRequest) {
+        RateResponse rateResponse = null;
+        Gson g = new Gson();
+        try {
+            URL url = new URL("https://api-sandbox.pitneybowes.com/shippingservices/v1/shipments");
+            //JSONObject jsonObj = new JSONObject(request);
+            String rateRequestJson = g.toJson(rateRequest);
+            String urlParameters = rateRequestJson;
+            byte[] postData = urlParameters.getBytes();
+            int postDataLength = postData.length;
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            // Add Request Header
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("X-PB-Shipper-Rate-Plan", "");
+            urlConnection.setRequestProperty("X-PB-TransactionId", "ship-W2" + System.currentTimeMillis() + "CRiP");
+            urlConnection.setRequestProperty("Authorization", "Bearer " + getToken("https://api-sandbox.pitneybowes.com/oauth/token" , "ZENzQXRBa2Y5QXVSS0gxVlk1eFpYdlZrSGJmTWxoUEw6S1l6WjJmTDJIYVJtbFlKQQ=="));
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+            urlConnection.setUseCaches(false);
+            urlConnection.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
+            wr.write(postData);
+            //display what returns the POST request
+            StringBuilder sb = new StringBuilder();
+            int HttpResult = urlConnection.getResponseCode();
+            if (HttpResult == HttpURLConnection.HTTP_OK) {
+                BufferedReader br = new BufferedReader(
+                        new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+
+                rateResponse = g.fromJson(sb.toString(), RateResponse.class);
+            } else {
+                System.out.println(urlConnection.getResponseMessage());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rateResponse;
+    }
+
+    public static PostCodeResponse getPostCode(String toAddress) {
+        PostCodeResponse postCodeResponse = new PostCodeResponse();
+        try {
+            URL url = new URL("https://api.pitneybowes.com/location-intelligence/geocode-service/v1/transient/premium/geocode?country=USA&mainAddress="+toAddress+"&matchMode=Standard&fallbackGeo=true&fallbackPostal=true&maxCands=1&streetOffset=7&streetOffsetUnits=METERS&cornerOffset=7&cornerOffsetUnits=METERS");
+            //&mainAddress=1%20Sullivan%20SQ%2C%20Berwick
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("Authorization", "Bearer " + getToken("https://api.pitneybowes.com/oauth/token" , "NWtLRDdURFR6OVFUZ2kwQ0JGV1dtbW9QVmR5VDBIOGI6QXpJT3NPdEEyV3gzRnZMcw=="));
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            //display what returns the GET request
+            StringBuilder sb = new StringBuilder();
+            int HttpResult = urlConnection.getResponseCode();
+            if (HttpResult == HttpURLConnection.HTTP_OK) {
+                BufferedReader br = new BufferedReader(
+                        new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+                JSONObject jObject = new JSONObject(sb.toString());
+                JSONArray jArray =  (JSONArray)jObject.get("candidates");
+                JSONObject jObject2 = (JSONObject) jArray.get(0);
+                JSONObject address = (JSONObject) jObject2.get("address");
+                postCodeResponse.setAddressLastLine((String)address.get("addressLastLine"));
+                postCodeResponse.setAddressNumber((String)address.get("addressNumber"));
+                postCodeResponse.setAreaName1((String)address.get("areaName1"));
+                postCodeResponse.setAreaName2((String)address.get("areaName2"));
+                postCodeResponse.setAreaName3((String)address.get("areaName3"));
+                postCodeResponse.setAreaName4((String)address.get("areaName4"));
+                postCodeResponse.setMainAddressLine((String)address.get("mainAddressLine"));
+                postCodeResponse.setPlaceName((String)address.get("placeName"));
+                postCodeResponse.setPostCode1((String)address.get("postCode1"));
+                postCodeResponse.setPostCode2((String)address.get("postCode2"));
+                postCodeResponse.setCountry((String)address.get("country"));
+                postCodeResponse.setStreetName((String)address.get("streetName"));
+                //String addressJSON = new Gson().toJson(address);
+                //PostCodeResponse fullAddress = new Gson().fromJson(addressJSON,PostCodeResponse.class);
+                //postCode = (String) address.get("postCode1");
+            } else {
+                System.out.println(urlConnection.getResponseMessage());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return postCodeResponse;
+    }
+
+
+    /*static String responseJson = "{\n" +
             "\t\"fromAddress\": {\n" +
             "\t\t\"company\": \"Pitney Bowes Inc.\",\n" +
             "\t\t\"name\": \"sender_fname\",\n" +
@@ -216,18 +308,18 @@ public class GetAPIData {
             "\t]\n" +
             "}";
 
-    /**
+    *//**
      * As Actual API is not accessible, so created an dummy response
      *
      * @param request
      * @return
-     */
+     *//*
 
     public static RateResponse getDummyRates(String request) {
         Gson g = new Gson();
         RateResponse rateResponse = g.fromJson(responseJson, RateResponse.class);
         return rateResponse;
-    }
+    }*/
 
 
 }
