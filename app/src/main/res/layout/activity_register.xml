@@ -1,0 +1,100 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.pb.reminderapp.RegistrationActivity">
+
+    <include layout="@layout/header_without_back_button" />
+
+    <RelativeLayout
+        android:id="@+id/login_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/header"
+        android:layout_marginTop="@dimen/dp_50"
+        android:background="?attr/selectableItemBackground">
+        <!-- Login progress -->
+        <ProgressBar
+            android:id="@+id/login_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="20dp"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/firstName"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30"
+            android:layout_below="@+id/login_progress"
+            android:layout_marginBottom="@dimen/dp_20"
+            android:layout_marginLeft="@dimen/dp_50"
+            android:layout_marginRight="@dimen/dp_50"
+            android:background="@color/pb_gray_50_white"
+            android:hint="First Name"
+            android:shadowColor="@color/pb_gray_300_button_pressed"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="2"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_16" />
+
+        <EditText
+            android:id="@+id/lastName"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30"
+            android:layout_marginBottom="@dimen/dp_20"
+            android:layout_below="@+id/firstName"
+            android:layout_marginLeft="@dimen/dp_50"
+            android:layout_marginRight="@dimen/dp_50"
+            android:background="@color/pb_gray_50_white"
+            android:hint="Last Name"
+            android:shadowColor="@color/pb_gray_300_button_pressed"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="2"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_16" />
+
+        <EditText
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_80"
+            android:layout_marginBottom="@dimen/dp_20"
+            android:layout_below="@+id/lastName"
+            android:layout_marginLeft="@dimen/dp_50"
+            android:layout_marginRight="@dimen/dp_50"
+            android:background="@color/pb_gray_50_white"
+            android:hint="@string/prompt_sender_user_id"
+            android:shadowColor="@color/pb_gray_300_button_pressed"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="2"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_16" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/address"
+            android:background="?attr/selectableItemBackground">
+
+            <Button
+                android:id="@+id/email_sign_in_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="@dimen/dp_50"
+                android:layout_marginLeft="@dimen/dp_50"
+                android:background="@drawable/selector_blue_button_bg"
+                android:contentDescription="@string/app_name"
+                android:text="@string/action_sign_in"
+                android:textAllCaps="false"
+                android:textColor="@color/pb_gray_50_white"
+                android:textSize="@dimen/sp_22"
+                android:textStyle="normal" />
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>
