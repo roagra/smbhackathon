@@ -90,8 +90,12 @@ public class ReminderAppService {
         Map<String,DeliveryInfo> dayAndRateMap = new HashMap<>();
         EventInfo eventInfo = new EventInfo();
         String requiredDeliveryDate = eventDetails.getEventStartDate();
+        DateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = originalFormat.parse(requiredDeliveryDate);
+        String formattedDate = targetFormat.format(date);
         eventInfo.setEventTitle(eventDetails.getEventTitle());
-        eventInfo.setUserDeliveryDateTime(new SimpleDateFormat("yyyy-MM-dd").parse(requiredDeliveryDate).toString());
+        eventInfo.setUserDeliveryDateTime(formattedDate);
         eventInfo.setEventId(eventDetails.getEventId());
         eventInfo.setToAddress(eventDetails.getToAddress());
         List<EventInfo.ShippingOption> shippingOptions = new ArrayList<>();
