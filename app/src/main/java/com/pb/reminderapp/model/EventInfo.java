@@ -12,6 +12,8 @@ public class EventInfo {
 
     private boolean isEnabled;
 
+    private boolean isEarly;
+
     private boolean isSevere;
 
     private String eventId;
@@ -22,34 +24,72 @@ public class EventInfo {
 
     private ShippingOption fmShippingOption;
 
-    private boolean isStandardPostTooFar;
+    private boolean isStandardPostTooEarly;
 
-    private boolean isPriorityMailTooFar;
+    private boolean isPriorityMailTooEarly;
 
-    private boolean isFirstClassMailTooFar;
+    private boolean isFirstClassMailTooEarly;
 
-    public boolean isStandardPostTooFar() {
-        return isStandardPostTooFar;
+    private boolean isStandardPostTooLate;
+
+    private boolean isPriorityMailTooLate;
+
+    private boolean isFirstClassMailTooLate;
+
+    public boolean isEarly() {
+        return isEarly;
     }
 
-    public void setStandardPostTooFar(boolean standardPostTooFar) {
-        isStandardPostTooFar = standardPostTooFar;
+    public void setEarly(boolean early) {
+        isEarly = early;
     }
 
-    public boolean isPriorityMailTooFar() {
-        return isPriorityMailTooFar;
+    public boolean isStandardPostTooLate() {
+        return isStandardPostTooLate;
     }
 
-    public void setPriorityMailTooFar(boolean priorityMailTooFar) {
-        isPriorityMailTooFar = priorityMailTooFar;
+    public void setStandardPostTooLate(boolean standardPostTooLate) {
+        isStandardPostTooLate = standardPostTooLate;
     }
 
-    public boolean isFirstClassMailTooFar() {
-        return isFirstClassMailTooFar;
+    public boolean isPriorityMailTooLate() {
+        return isPriorityMailTooLate;
     }
 
-    public void setFirstClassMailTooFar(boolean firstClassMailTooFar) {
-        isFirstClassMailTooFar = firstClassMailTooFar;
+    public void setPriorityMailTooLate(boolean priorityMailTooLate) {
+        isPriorityMailTooLate = priorityMailTooLate;
+    }
+
+    public boolean isFirstClassMailTooLate() {
+        return isFirstClassMailTooLate;
+    }
+
+    public void setFirstClassMailTooLate(boolean firstClassMailTooLate) {
+        isFirstClassMailTooLate = firstClassMailTooLate;
+    }
+
+    public boolean isStandardPostTooEarly() {
+        return isStandardPostTooEarly;
+    }
+
+    public void setStandardPostTooEarly(boolean standardPostTooEarly) {
+        isStandardPostTooEarly = standardPostTooEarly;
+    }
+
+    public boolean isPriorityMailTooEarly() {
+        return isPriorityMailTooEarly;
+    }
+
+    public void setPriorityMailTooEarly(boolean priorityMailTooEarly) {
+        isPriorityMailTooEarly = priorityMailTooEarly;
+    }
+
+    public boolean isFirstClassMailTooEarly() {
+        return isFirstClassMailTooEarly;
+    }
+
+    public void setFirstClassMailTooEarly(boolean firstClassMailTooEarly) {
+        isFirstClassMailTooEarly = firstClassMailTooEarly;
     }
 
     public boolean isSevere() {

@@ -23,12 +23,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -139,6 +135,13 @@ public class ReminderAppService {
             shippingOption.setNote("Mail Class : Priority Mail, Estimated Delivery Date : " + dayAndRateMap.get("PM").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("PM").getTotalCarrierCharge());
             eventInfo.setPmShippingOption(shippingOption);
         }
+        if (eventInfo.isStandardPostTooLate() && eventInfo.isPriorityMailTooLate() && eventInfo.isFirstClassMailTooLate()){
+            eventInfo.setSevere(true);
+        }
+
+        if (eventInfo.isStandardPostTooEarly() && eventInfo.isPriorityMailTooEarly() && eventInfo.isFirstClassMailTooEarly()){
+            eventInfo.setEarly(true);
+        }
         return eventInfo;
     }
 
@@ -160,8 +163,12 @@ public class ReminderAppService {
                 return true;
             }
             if(requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
-                eventInfo.setStandardPostTooFar(true);
+                eventInfo.setStandardPostTooEarly(true);
             }
+            if(requiredDeliveryDateD.before(estimatedDeliveryDateTimeD)){
+                eventInfo.setStandardPostTooLate(true);
+            }
+
         }
 
         if (mailClass.equals("FCM")){
@@ -173,7 +180,10 @@ public class ReminderAppService {
                     return true;
             }
             if(requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
-                eventInfo.setFirstClassMailTooFar(true);
+                eventInfo.setFirstClassMailTooEarly(true);
+            }
+            if(requiredDeliveryDateD.before(estimatedDeliveryDateTimeD)){
+                eventInfo.setFirstClassMailTooLate(true);
             }
         }
 
@@ -186,7 +196,10 @@ public class ReminderAppService {
                     return true;
             }
             if(requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
-                eventInfo.setPriorityMailTooFar(true);
+                eventInfo.setPriorityMailTooEarly(true);
+            }
+            if(requiredDeliveryDateD.before(estimatedDeliveryDateTimeD)){
+                eventInfo.setPriorityMailTooLate(true);
             }
         }
         return false;

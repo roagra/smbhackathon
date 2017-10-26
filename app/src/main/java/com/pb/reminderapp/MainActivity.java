@@ -19,7 +19,6 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
 
 import com.google.gson.Gson;
-import com.pb.reminderapp.model.EventDescription;
 import com.pb.reminderapp.model.EventDetails;
 import com.pb.reminderapp.model.EventInfo;
 import com.pb.reminderapp.model.RateRequest;
@@ -294,11 +293,14 @@ public class MainActivity extends Activity
                     if(rateResponse != null) {
                         eventInfo = appService.prepareSuggestion(rateResponse, eventDetails);
                         // If all values are null it means delivery date has passed
-                        if(null == eventInfo.getStandardShippingOption() && null == eventInfo.getFmShippingOption() && null == eventInfo.getPmShippingOption()){
+  /*                      if(null == eventInfo.getStandardShippingOption() && null == eventInfo.getFmShippingOption() && null == eventInfo.getPmShippingOption()){
                             eventInfo.setSevere(true);
-                        }
-                        // If all are too early don't show in the list
-                        if (!(eventInfo.isStandardPostTooFar() && eventInfo.isPriorityMailTooFar() && eventInfo.isFirstClassMailTooFar())){
+                        }*/
+                        // If all are too early don't show in the list  OR If all are null but not severe don't show in the list
+                        if (
+                                (!(eventInfo.isEarly())) &&
+                                (!(null == eventInfo.getStandardShippingOption() && null == eventInfo.getFmShippingOption() && null == eventInfo.getPmShippingOption() && !eventInfo.isSevere()))
+                                ){
                             listEventInfo.add(eventInfo);
                         }
                     }
