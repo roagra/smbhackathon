@@ -58,13 +58,13 @@ public class LazyAdapter extends BaseAdapter {
 
         final EventInfo eventInfo = data.get(position);
 
-        // Setting all values in listview
-        ImageView thumb_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
-        Drawable myDrawable = activity.getResources().getDrawable(R.drawable.todo);
+//        // Setting all values in listview
+//        ImageView thumb_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
+//        Drawable myDrawable = activity.getResources().getDrawable(R.drawable.todo);
 
 
         CheckBox enabledCheckBox = vi.findViewById(R.id.enabled); // thumb image
-        thumb_image.setImageDrawable(myDrawable);
+        //thumb_image.setImageDrawable(myDrawable);
 //        if (notification.get() == 1) {
 //            myDrawable = activity.getResources().getDrawable(R.drawable.red_alert);
 //            thumb_image.setImageDrawable(myDrawable);
@@ -90,7 +90,7 @@ public class LazyAdapter extends BaseAdapter {
         RadioButton standard = null;
         if (eventInfo.getStandardShippingOption() != null) {
             standard = new RadioButton(activity.getApplicationContext());
-            standard.setTextSize(9);
+            standard.setTextSize(11);
             standard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -112,7 +112,7 @@ public class LazyAdapter extends BaseAdapter {
 
         if (eventInfo.getFmShippingOption() != null) {
             fm = new RadioButton(activity.getApplicationContext());
-            fm.setTextSize(9);
+            fm.setTextSize(11);
             fm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -133,7 +133,7 @@ public class LazyAdapter extends BaseAdapter {
 
         if (eventInfo.getPmShippingOption() != null) {
             pm = new RadioButton(activity.getApplicationContext());
-            pm.setTextSize(9);
+            pm.setTextSize(11);
             pm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

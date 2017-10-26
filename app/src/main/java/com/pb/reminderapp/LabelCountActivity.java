@@ -104,7 +104,7 @@ public class LabelCountActivity extends Activity {
         List<LabelCount> labelCounts = new ArrayList<>();
         java.util.Calendar calender = java.util.GregorianCalendar.getInstance();
         Date date = calender.getTime();
-        SimpleDateFormat dt = new SimpleDateFormat("yyyyy-mm-dd");
+        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
         String currentDate = dt.format(date);
 
         labelCounts.add(new LabelCount("Date ", "Label Count"));
