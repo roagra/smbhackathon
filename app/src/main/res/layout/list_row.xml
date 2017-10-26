@@ -70,22 +70,9 @@
                 <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/radioGroup"
                     android:orientation="vertical">
-                    <RadioButton android:id="@+id/standard"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Standard"
-                        android:textSize="9dip"/>
-                    <RadioButton android:id="@+id/fmRadio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="FM"
-                        android:textSize="9dip"/>
-                    <RadioButton android:id="@+id/pmRadio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="FM"
-                        android:textSize="9dip"/>
+
                 </RadioGroup>
 
 

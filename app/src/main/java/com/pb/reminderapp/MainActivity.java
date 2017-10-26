@@ -93,7 +93,13 @@ public class MainActivity extends Activity
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
-
+        ImageView backImageView = findViewById(R.id.image_view_header_icon);
+        backImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainActivity.onBackPressed();
+            }
+        });
 
         ImageView printImageView = findViewById(R.id.printLabels);
 
@@ -285,11 +291,21 @@ public class MainActivity extends Activity
                     EventInfo eventInfo = new EventInfo();
                     rateRequest = appService.prepareRateAndShipmentRequest(eventDetails.getToAddress(), "");
                     rateResponse = GetAPIData.getRates(rateRequest);
-                    eventInfo = appService.prepareSuggestion(rateResponse, eventDetails);
+                    if(rateResponse != null) {
+                        eventInfo = appService.prepareSuggestion(rateResponse, eventDetails);
+                        // If all values are null it means delivery date has passed
+                        if(null == eventInfo.getStandardShippingOption() && null == eventInfo.getFmShippingOption() && null == eventInfo.getPmShippingOption()){
+                            eventInfo.setSevere(true);
+                        }
+                        // If all are too early don't show in the list
+                        if (!(eventInfo.isStandardPostTooFar() && eventInfo.isPriorityMailTooFar() && eventInfo.isFirstClassMailTooFar())){
+                            listEventInfo.add(eventInfo);
+                        }
+                    }
                     //RateRequest shipmentRequest =  appService.prepareRateAndShipmentRequest(eventDetails.getToAddress(), "PM");
                     //RateResponse shipmentResponse = GetAPIData.getShipmentLabel(shipmentRequest);
                     //appService.markEventAsCancelled(eventInfo.getEventId(),mService);
-                    listEventInfo.add(eventInfo);
+
                 }
                 return listEventInfo;
             } catch (Exception e) {

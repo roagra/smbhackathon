@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpTransport;
@@ -24,13 +26,17 @@ import java.util.List;
 
 public class PrintPreviewActivity extends Activity {
     private PrintPreviewActivity printPreviewActivity;
+    private WebView webView;
+    private LinearLayout baseContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print_priview);
         this.printPreviewActivity = this;
-
+        webView = findViewById(R.id.webView);
+        webView.getSettings().setJavaScriptEnabled(true);
+        baseContainer = findViewById(R.id.baseContainer);
         ImageView backImageView = findViewById(R.id.image_view_header_icon);
         backImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,10 +68,10 @@ public class PrintPreviewActivity extends Activity {
                 List<EventInfo> listEventInfo = PreferencesUtils.getSelectedEventInfo();
                 for (EventInfo eventInfo : listEventInfo) {
                     EventInfo.ShippingOption shippingOption = getSelectedShippingOption(eventInfo);
-                    RateRequest shipmentRequest =  appService.prepareRateAndShipmentRequest(eventInfo.getToAddress(), shippingOption.getMailClass());
-                    RateResponse shipmentResponse = GetAPIData.getShipmentLabel(shipmentRequest);
-                    appService.markEventAsCancelled(eventInfo.getEventId(),mService);
-                    rateResponseList.add(shipmentResponse);
+                    //RateRequest shipmentRequest = appService.prepareRateAndShipmentRequest(eventInfo.getToAddress(), shippingOption.getMailClass());
+                    //RateResponse shipmentResponse = GetAPIData.getShipmentLabel(shipmentRequest);
+                    //appService.markEventAsCancelled(eventInfo.getEventId(),mService);
+                    //rateResponseList.add(shipmentResponse);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -77,11 +83,11 @@ public class PrintPreviewActivity extends Activity {
         }
 
         private EventInfo.ShippingOption getSelectedShippingOption(EventInfo eventInfo) {
-            if (eventInfo.getStandardShippingOption().isSelected()){
+            if (eventInfo.getStandardShippingOption() != null && eventInfo.getStandardShippingOption().isSelected()) {
                 return eventInfo.getStandardShippingOption();
-            } else if(eventInfo.getFmShippingOption().isSelected()){
+            } else if (eventInfo.getFmShippingOption() != null && eventInfo.getFmShippingOption().isSelected()) {
                 return eventInfo.getFmShippingOption();
-            } else if(eventInfo.getPmShippingOption().isSelected()){
+            } else if (eventInfo.getPmShippingOption() != null && eventInfo.getPmShippingOption().isSelected()) {
                 return eventInfo.getPmShippingOption();
             } else {
                 return null;
@@ -96,7 +102,15 @@ public class PrintPreviewActivity extends Activity {
 
         @Override
         protected void onPostExecute(Boolean output) {
+            String pdf = "https://web-prt3.gcs.pitneybowes.com/usps/325584758/outbound/label/3a58503e50d848ff82d3f9e60d99ba4d.pdf";
+            webView.loadUrl("http://drive.google.com/viewerng/viewer?embedded=true&url=" + pdf);
 
+            WebView webView = new WebView(printPreviewActivity);
+            webView.getSettings().setJavaScriptEnabled(true);
+            pdf = "https://web-prt3.gcs.pitneybowes.com/usps/325584758/outbound/label/3a58503e50d848ff82d3f9e60d99ba4d.pdf";
+            webView.loadUrl("http://drive.google.com/viewerng/viewer?embedded=true&url=" + pdf);
+            baseContainer.addView(webView);
+            baseContainer.invalidate();
         }
 
         @Override

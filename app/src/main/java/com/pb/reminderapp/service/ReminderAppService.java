@@ -119,21 +119,21 @@ public class ReminderAppService {
             }
         }
 
-        if (dateCheckMailClass("STDPOST", formattedRequiredDeliveryDate, dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate())){
+        if (dateCheckMailClass(eventInfo, "STDPOST", formattedRequiredDeliveryDate, dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate())){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("STDPOST");
             shippingOption.setNote("Mail Class : Standard Post, Estimated Delivery Date : " + dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("STDPOST").getTotalCarrierCharge());
             eventInfo.setStandardShippingOption(shippingOption);
         }
 
-        if (dateCheckMailClass("FCM", formattedRequiredDeliveryDate, dayAndRateMap.get("FCM").getEstimatedDeliveryDate())){
+        if ((dateCheckMailClass(eventInfo, "FCM", formattedRequiredDeliveryDate, dayAndRateMap.get("FCM").getEstimatedDeliveryDate())) || null !=  eventInfo.getStandardShippingOption()){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("FCM");
             shippingOption.setNote("Mail Class : First Class, Estimated Delivery Date : " + dayAndRateMap.get("FCM").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("FCM").getTotalCarrierCharge());
             eventInfo.setFmShippingOption(shippingOption);
         }
 
-        if (dateCheckMailClass("PM", formattedRequiredDeliveryDate, dayAndRateMap.get("PM").getEstimatedDeliveryDate())){
+        if ((dateCheckMailClass(eventInfo, "PM", formattedRequiredDeliveryDate, dayAndRateMap.get("PM").getEstimatedDeliveryDate())) || null !=  eventInfo.getStandardShippingOption()){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("PM");
             shippingOption.setNote("Mail Class : Priority Mail, Estimated Delivery Date : " + dayAndRateMap.get("PM").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("PM").getTotalCarrierCharge());
@@ -142,7 +142,7 @@ public class ReminderAppService {
         return eventInfo;
     }
 
-    private boolean dateCheckMailClass(String mailClass, String requiredDeliveryDate, String estimatedDeliveryDateTime) {
+    private boolean dateCheckMailClass(EventInfo eventInfo, String mailClass, String requiredDeliveryDate, String estimatedDeliveryDateTime) {
         Date requiredDeliveryDateD = null;
         Date estimatedDeliveryDateTimeD = null;
         try {
@@ -159,6 +159,9 @@ public class ReminderAppService {
             if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD) && !requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
                 return true;
             }
+            if(requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
+                eventInfo.setStandardPostTooFar(true);
+            }
         }
 
         if (mailClass.equals("FCM")){
@@ -169,6 +172,9 @@ public class ReminderAppService {
             if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD) && !requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
                     return true;
             }
+            if(requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
+                eventInfo.setFirstClassMailTooFar(true);
+            }
         }
 
         if (mailClass.equals("PM")){
@@ -178,6 +184,9 @@ public class ReminderAppService {
             Date estimatedDeliveryDateTimePlusOne = c.getTime();
             if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD) && !requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
                     return true;
+            }
+            if(requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
+                eventInfo.setPriorityMailTooFar(true);
             }
         }
         return false;
@@ -459,6 +468,28 @@ public class ReminderAppService {
 
         public void setTotalCarrierCharge(Double totalCarrierCharge) {
             this.totalCarrierCharge = totalCarrierCharge;
+        }
+    }
+
+    public static class TakeDecision {
+        private boolean isTooEarly;
+
+        private boolean isTooLate;
+
+        public boolean isTooEarly() {
+            return isTooEarly;
+        }
+
+        public void setTooEarly(boolean tooEarly) {
+            isTooEarly = tooEarly;
+        }
+
+        public boolean isTooLate() {
+            return isTooLate;
+        }
+
+        public void setTooLate(boolean tooLate) {
+            isTooLate = tooLate;
         }
     }
 

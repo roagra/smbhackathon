@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.pb.reminderapp.R;
@@ -84,62 +85,93 @@ public class LazyAdapter extends BaseAdapter {
         //recommendation.setText(eventInfo.getSuggestion());
         duration.setText(eventInfo.getUserDeliveryDateTime());
 
-        RadioButton standard = vi.findViewById(R.id.standard);
-        RadioButton fm = vi.findViewById(R.id.fmRadio);
-        RadioButton pm = vi.findViewById(R.id.pmRadio);
-
-        standard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.isEnabled()) {
-                    eventInfo.getStandardShippingOption().setSelected(true);
-                    eventInfo.getFmShippingOption().setSelected(false);
-                    eventInfo.getPmShippingOption().setSelected(false);
-                }
-            }
-        });
-
-        fm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.isEnabled()) {
-                    eventInfo.getStandardShippingOption().setSelected(false);
-                    eventInfo.getFmShippingOption().setSelected(true);
-                    eventInfo.getPmShippingOption().setSelected(false);
-                }
-            }
-        });
-        pm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.isEnabled()) {
-                    eventInfo.getStandardShippingOption().setSelected(false);
-                    eventInfo.getFmShippingOption().setSelected(false);
-                    eventInfo.getPmShippingOption().setSelected(true);
-                }
-            }
-        });
-
+        RadioGroup radioGroup = vi.findViewById(R.id.radioGroup);
+        radioGroup.removeAllViews();
+        RadioButton standard = null;
         if (eventInfo.getStandardShippingOption() != null) {
-            standard.setVisibility(View.VISIBLE);
+            standard = new RadioButton(activity.getApplicationContext());
+            standard.setTextSize(9);
+            standard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (view.isEnabled()) {
+                        if (eventInfo.getStandardShippingOption() != null)
+                            eventInfo.getStandardShippingOption().setSelected(true);
+                        if (eventInfo.getFmShippingOption() != null)
+                            eventInfo.getFmShippingOption().setSelected(false);
+                        if (eventInfo.getPmShippingOption() != null)
+                            eventInfo.getPmShippingOption().setSelected(false);
+                    }
+                }
+            });
             standard.setText(eventInfo.getStandardShippingOption().getNote());
-        } else {
-            standard.setVisibility(View.INVISIBLE);
+            radioGroup.addView(standard);
         }
 
-        if (eventInfo.getPmShippingOption() != null) {
-            pm.setVisibility(View.VISIBLE);
-            pm.setText(eventInfo.getPmShippingOption().getNote());
-        } else {
-            pm.setVisibility(View.INVISIBLE);
-        }
+        RadioButton fm = null;
 
         if (eventInfo.getFmShippingOption() != null) {
-            fm.setVisibility(View.VISIBLE);
+            fm = new RadioButton(activity.getApplicationContext());
+            fm.setTextSize(9);
+            fm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (view.isEnabled()) {
+                        if (eventInfo.getStandardShippingOption() != null)
+                            eventInfo.getStandardShippingOption().setSelected(false);
+                        if (eventInfo.getFmShippingOption() != null)
+                            eventInfo.getFmShippingOption().setSelected(true);
+                        if (eventInfo.getPmShippingOption() != null)
+                            eventInfo.getPmShippingOption().setSelected(false);
+                    }
+                }
+            });
             fm.setText(eventInfo.getFmShippingOption().getNote());
-        } else {
-            fm.setVisibility(View.INVISIBLE);
+            radioGroup.addView(fm);
         }
+        RadioButton pm = null;
+
+        if (eventInfo.getPmShippingOption() != null) {
+            pm = new RadioButton(activity.getApplicationContext());
+            pm.setTextSize(9);
+            pm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (view.isEnabled()) {
+                        if (eventInfo.getStandardShippingOption() != null)
+                            eventInfo.getStandardShippingOption().setSelected(false);
+                        if (eventInfo.getFmShippingOption() != null)
+                            eventInfo.getFmShippingOption().setSelected(false);
+                        if (eventInfo.getPmShippingOption() != null)
+                            eventInfo.getPmShippingOption().setSelected(true);
+                    }
+                }
+            });
+            pm.setText(eventInfo.getPmShippingOption().getNote());
+            radioGroup.addView(pm);
+        }
+
+
+//        if (eventInfo.getStandardShippingOption() != null) {
+//            standard.setVisibility(View.VISIBLE);
+//
+//        } else {
+//            standard.setVisibility(View.INVISIBLE);
+//        }
+//
+//        if (eventInfo.getPmShippingOption() != null) {
+//            pm.setVisibility(View.VISIBLE);
+//            pm.setText(eventInfo.getPmShippingOption().getNote());
+//        } else {
+//            pm.setVisibility(View.INVISIBLE);
+//        }
+//
+//        if (eventInfo.getFmShippingOption() != null) {
+//            fm.setVisibility(View.VISIBLE);
+//            fm.setText(eventInfo.getFmShippingOption().getNote());
+//        } else {
+//            fm.setVisibility(View.INVISIBLE);
+//        }
 
         return vi;
     }

@@ -7,12 +7,17 @@
 
     <include layout="@layout/header" />
 
-    <ImageView
-        android:id="@+id/preview"
+    <LinearLayout
+        android:id="@+id/baseContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/preview_image" />
+        android:layout_height="match_parent" android:orientation="vertical">
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+
+
+    </WebView>
+    </LinearLayout>
 </LinearLayout>

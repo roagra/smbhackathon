@@ -12,6 +12,8 @@ public class EventInfo {
 
     private boolean isEnabled;
 
+    private boolean isSevere;
+
     private String eventId;
 
     private ShippingOption standardShippingOption;
@@ -19,6 +21,44 @@ public class EventInfo {
     private ShippingOption pmShippingOption;
 
     private ShippingOption fmShippingOption;
+
+    private boolean isStandardPostTooFar;
+
+    private boolean isPriorityMailTooFar;
+
+    private boolean isFirstClassMailTooFar;
+
+    public boolean isStandardPostTooFar() {
+        return isStandardPostTooFar;
+    }
+
+    public void setStandardPostTooFar(boolean standardPostTooFar) {
+        isStandardPostTooFar = standardPostTooFar;
+    }
+
+    public boolean isPriorityMailTooFar() {
+        return isPriorityMailTooFar;
+    }
+
+    public void setPriorityMailTooFar(boolean priorityMailTooFar) {
+        isPriorityMailTooFar = priorityMailTooFar;
+    }
+
+    public boolean isFirstClassMailTooFar() {
+        return isFirstClassMailTooFar;
+    }
+
+    public void setFirstClassMailTooFar(boolean firstClassMailTooFar) {
+        isFirstClassMailTooFar = firstClassMailTooFar;
+    }
+
+    public boolean isSevere() {
+        return isSevere;
+    }
+
+    public void setSevere(boolean severe) {
+        isSevere = severe;
+    }
 
     public ShippingOption getStandardShippingOption() {
         return standardShippingOption;
