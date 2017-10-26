@@ -86,6 +86,14 @@ public class ReminderAppService {
     }
 
 
+    public void markEventAsCancelled(String eventId, com.google.api.services.calendar.Calendar mService) throws IOException {
+        Event event = mService.events().get("primary", eventId).execute();
+        event.setStatus("tentative");
+        //String eventColor = event.getColorId();
+        mService.events().update("primary", event.getId(), event).execute();
+    }
+
+
     public EventInfo prepareSuggestion(RateResponse rateResponse, EventDetails eventDetails) throws ParseException {
         Map<String,DeliveryInfo> dayAndRateMap = new HashMap<>();
         EventInfo eventInfo = new EventInfo();
@@ -93,9 +101,9 @@ public class ReminderAppService {
         DateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = originalFormat.parse(requiredDeliveryDate);
-        String formattedDate = targetFormat.format(date);
+        String formattedRequiredDeliveryDate = targetFormat.format(date);
         eventInfo.setEventTitle(eventDetails.getEventTitle());
-        eventInfo.setUserDeliveryDateTime(formattedDate);
+        eventInfo.setUserDeliveryDateTime(formattedRequiredDeliveryDate);
         eventInfo.setEventId(eventDetails.getEventId());
         eventInfo.setToAddress(eventDetails.getToAddress());
         List<EventInfo.ShippingOption> shippingOptions = new ArrayList<>();
@@ -111,21 +119,21 @@ public class ReminderAppService {
             }
         }
 
-        if (dateCheckMailClass("STDPOST", requiredDeliveryDate, dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate())){
+        if (dateCheckMailClass("STDPOST", formattedRequiredDeliveryDate, dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate())){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("STDPOST");
             shippingOption.setNote("Mail Class : Standard Post, Estimated Delivery Date : " + dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("STDPOST").getTotalCarrierCharge());
             eventInfo.setStandardShippingOption(shippingOption);
         }
 
-        if (dateCheckMailClass("FCM", requiredDeliveryDate, dayAndRateMap.get("FCM").getEstimatedDeliveryDate())){
+        if (dateCheckMailClass("FCM", formattedRequiredDeliveryDate, dayAndRateMap.get("FCM").getEstimatedDeliveryDate())){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("FCM");
             shippingOption.setNote("Mail Class : First Class, Estimated Delivery Date : " + dayAndRateMap.get("FCM").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("FCM").getTotalCarrierCharge());
             eventInfo.setFmShippingOption(shippingOption);
         }
 
-        if (dateCheckMailClass("PM", requiredDeliveryDate, dayAndRateMap.get("PM").getEstimatedDeliveryDate())){
+        if (dateCheckMailClass("PM", formattedRequiredDeliveryDate, dayAndRateMap.get("PM").getEstimatedDeliveryDate())){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("PM");
             shippingOption.setNote("Mail Class : Priority Mail, Estimated Delivery Date : " + dayAndRateMap.get("PM").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("PM").getTotalCarrierCharge());
@@ -138,7 +146,7 @@ public class ReminderAppService {
         Date requiredDeliveryDateD = null;
         Date estimatedDeliveryDateTimeD = null;
         try {
-            requiredDeliveryDateD = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").parse(requiredDeliveryDate);
+            requiredDeliveryDateD = new SimpleDateFormat("yyyy-MM-dd").parse(requiredDeliveryDate);
             estimatedDeliveryDateTimeD = new SimpleDateFormat("yyyy-MM-dd").parse(estimatedDeliveryDateTime);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -148,9 +156,8 @@ public class ReminderAppService {
             c.setTime(estimatedDeliveryDateTimeD);
             c.add(Calendar.DATE, 1);
             Date estimatedDeliveryDateTimePlusOne = c.getTime();
-            if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD)){
-                if (requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne))
-                return false;
+            if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD) && !requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
+                return true;
             }
         }
 
@@ -159,9 +166,8 @@ public class ReminderAppService {
             c.setTime(estimatedDeliveryDateTimeD);
             c.add(Calendar.DATE, 1);
             Date estimatedDeliveryDateTimePlusOne = c.getTime();
-            if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD)){
-                if (requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne))
-                    return false;
+            if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD) && !requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
+                    return true;
             }
         }
 
@@ -170,12 +176,11 @@ public class ReminderAppService {
             c.setTime(estimatedDeliveryDateTimeD);
             c.add(Calendar.DATE, 1);
             Date estimatedDeliveryDateTimePlusOne = c.getTime();
-            if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD)){
-                if (requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne))
-                    return false;
+            if(!requiredDeliveryDateD.before(estimatedDeliveryDateTimeD) && !requiredDeliveryDateD.after(estimatedDeliveryDateTimePlusOne)){
+                    return true;
             }
         }
-        return true;
+        return false;
     }
 
 
@@ -425,6 +430,7 @@ public class ReminderAppService {
 
         return rateRequest;
     }
+
 
     public static class DeliveryInfo {
         private Integer days;

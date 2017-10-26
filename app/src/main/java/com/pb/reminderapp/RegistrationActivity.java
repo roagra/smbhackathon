@@ -25,6 +25,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
+import com.pb.reminderapp.utility.GetAPIData;
 import com.pb.reminderapp.utility.PreferencesUtils;
 
 import java.util.Arrays;
@@ -63,6 +64,11 @@ public class RegistrationActivity extends Activity
     private static final String WAIT_TEXT = "Getting Shipment Details from Google Calender....";
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = {CalendarScopes.CALENDAR};
+    private static final String SANDBOX_OAUTH_URL = "https://api-sandbox.pitneybowes.com/oauth/token";
+    private static final String PROD_OAUTH_URL = "https://api.pitneybowes.com/oauth/token";
+    private static final String SANDBOX_APIKEY_SECRET = "ZENzQXRBa2Y5QXVSS0gxVlk1eFpYdlZrSGJmTWxoUEw6S1l6WjJmTDJIYVJtbFlKQQ==";
+    private static final String PROD_APIKEY_SECRET = "NWtLRDdURFR6OVFUZ2kwQ0JGV1dtbW9QVmR5VDBIOGI6QXpJT3NPdEEyV3gzRnZMcw==";
+
 
     /**
      * Create the main activity.
@@ -107,9 +113,11 @@ public class RegistrationActivity extends Activity
     }
 
     private void attemptLogin() {
-
+        long currentTimeInMillis = System.currentTimeMillis();
+        String sandboxToken = GetAPIData.getToken(SANDBOX_OAUTH_URL , SANDBOX_APIKEY_SECRET);
+        String prodToken = GetAPIData.getToken(PROD_OAUTH_URL ,PROD_APIKEY_SECRET);
         PreferencesUtils.saveRegistrationPreference("", addressView.getText().
-                toString(), firstNameView.getText().toString(), lastNameView.getText().toString());
+                toString(), firstNameView.getText().toString(), lastNameView.getText().toString(), sandboxToken, prodToken, currentTimeInMillis);
         Intent intent = new Intent(getContext(), LabelCountActivity.class);
         getContext().startActivity(intent);
 

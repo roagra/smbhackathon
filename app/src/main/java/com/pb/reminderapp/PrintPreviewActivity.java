@@ -50,7 +50,7 @@ public class PrintPreviewActivity extends Activity {
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             mService = new com.google.api.services.calendar.Calendar.Builder(
                     transport, jsonFactory, PreferencesUtils.getCredentials())
-                    .setApplicationName("Reminder App using Google Calendar API Android")
+                    .setApplicationName("Reminder App using Google Calendar API Android to mark Event as done")
                     .build();
         }
 
@@ -64,6 +64,7 @@ public class PrintPreviewActivity extends Activity {
                     EventInfo.ShippingOption shippingOption = getSelectedShippingOption(eventInfo);
                     RateRequest shipmentRequest =  appService.prepareRateAndShipmentRequest(eventInfo.getToAddress(), shippingOption.getMailClass());
                     RateResponse shipmentResponse = GetAPIData.getShipmentLabel(shipmentRequest);
+                    appService.markEventAsCancelled(eventInfo.getEventId(),mService);
                     rateResponseList.add(shipmentResponse);
                 }
             } catch (Exception e) {

@@ -21,7 +21,16 @@ import java.net.URL;
 
 public class GetAPIData {
 
-    private static EventDetails eventDetails;
+    private static final String SANDBOX_RATES_API_URL = "https://api-sandbox.pitneybowes.com/shippingservices/v1/rates?includeDeliveryCommitment=true";
+    private static final String SANDBOX_SHIPPING_LABELS_API_URL = "https://api-sandbox.pitneybowes.com/shippingservices/v1/shipments?includeDeliveryCommitment=true";
+    public static final String SANDBOX_TOKEN = "SANDBOX_TOKEN";
+    public static final String PROD_TOKEN = "PROD_TOKEN";
+    private static final String SANDBOX_OAUTH_URL = "https://api-sandbox.pitneybowes.com/oauth/token";
+    private static final String PROD_OAUTH_URL = "https://api.pitneybowes.com/oauth/token";
+    private static final String SANDBOX_APIKEY_SECRET = "ZENzQXRBa2Y5QXVSS0gxVlk1eFpYdlZrSGJmTWxoUEw6S1l6WjJmTDJIYVJtbFlKQQ==";
+    private static final String PROD_APIKEY_SECRET = "NWtLRDdURFR6OVFUZ2kwQ0JGV1dtbW9QVmR5VDBIOGI6QXpJT3NPdEEyV3gzRnZMcw==";
+
+/*    private static EventDetails eventDetails;
 
     public static EventDetails getSelectedEventDetails() {
         return eventDetails;
@@ -29,9 +38,9 @@ public class GetAPIData {
 
     public static void setSelectedEventDetails(EventDetails eventDetailsObj) {
         eventDetails = eventDetailsObj;
-    }
+    }*/
 
-    private static String getToken(String urlStr , String APIkeySecret) {
+    public static String getToken(String urlStr , String APIkeySecret) {
         String token = "";
         try {
             URL url = new URL(urlStr);
@@ -74,7 +83,7 @@ public class GetAPIData {
         RateResponse rateResponse = null;
         Gson g = new Gson();
         try {
-            URL url = new URL("https://api-sandbox.pitneybowes.com/shippingservices/v1/rates?includeDeliveryCommitment=true");
+            URL url = new URL(SANDBOX_RATES_API_URL);
             //JSONObject jsonObj = new JSONObject(request);
             String rateRequestJson = g.toJson(rateRequest);
             String urlParameters = rateRequestJson;
@@ -84,7 +93,7 @@ public class GetAPIData {
             // Add Request Header
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("X-PB-Shipper-Rate-Plan", "");
-            urlConnection.setRequestProperty("Authorization", "Bearer " + getToken("https://api-sandbox.pitneybowes.com/oauth/token" , "ZENzQXRBa2Y5QXVSS0gxVlk1eFpYdlZrSGJmTWxoUEw6S1l6WjJmTDJIYVJtbFlKQQ=="));
+            urlConnection.setRequestProperty("Authorization", "Bearer " + checkToken(SANDBOX_TOKEN));
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
             urlConnection.setUseCaches(false);
@@ -117,7 +126,7 @@ public class GetAPIData {
         RateResponse rateResponse = null;
         Gson g = new Gson();
         try {
-            URL url = new URL("https://api-sandbox.pitneybowes.com/shippingservices/v1/shipments");
+            URL url = new URL(SANDBOX_SHIPPING_LABELS_API_URL);
             //JSONObject jsonObj = new JSONObject(request);
             String rateRequestJson = g.toJson(rateRequest);
             String urlParameters = rateRequestJson;
@@ -128,7 +137,7 @@ public class GetAPIData {
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("X-PB-Shipper-Rate-Plan", "");
             urlConnection.setRequestProperty("X-PB-TransactionId", "ship-W2" + System.currentTimeMillis() + "CRiP");
-            urlConnection.setRequestProperty("Authorization", "Bearer " + getToken("https://api-sandbox.pitneybowes.com/oauth/token" , "ZENzQXRBa2Y5QXVSS0gxVlk1eFpYdlZrSGJmTWxoUEw6S1l6WjJmTDJIYVJtbFlKQQ=="));
+            urlConnection.setRequestProperty("Authorization", "Bearer " + checkToken(SANDBOX_TOKEN));
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
             urlConnection.setUseCaches(false);
@@ -160,11 +169,10 @@ public class GetAPIData {
     public static PostCodeResponse getPostCode(String toAddress) {
         PostCodeResponse postCodeResponse = new PostCodeResponse();
         try {
-            URL url = new URL("https://api.pitneybowes.com/location-intelligence/geocode-service/v1/transient/premium/geocode?country=USA&mainAddress="+toAddress+"&matchMode=Standard&fallbackGeo=true&fallbackPostal=true&maxCands=1&streetOffset=7&streetOffsetUnits=METERS&cornerOffset=7&cornerOffsetUnits=METERS");
-            //&mainAddress=1%20Sullivan%20SQ%2C%20Berwick
+            URL url = new URL("https://api.pitneybowes.com/location-intelligence/geocode-service/v1/transient/premium/geocode?country=USA&mainAddress="+ toAddress +"&matchMode=Standard&fallbackGeo=true&fallbackPostal=true&maxCands=1&streetOffset=7&streetOffsetUnits=METERS&cornerOffset=7&cornerOffsetUnits=METERS");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty("Authorization", "Bearer " + getToken("https://api.pitneybowes.com/oauth/token" , "NWtLRDdURFR6OVFUZ2kwQ0JGV1dtbW9QVmR5VDBIOGI6QXpJT3NPdEEyV3gzRnZMcw=="));
+            urlConnection.setRequestProperty("Authorization", "Bearer " + checkToken(PROD_TOKEN));
             urlConnection.setRequestProperty("Content-Type", "application/json");
             //display what returns the GET request
             StringBuilder sb = new StringBuilder();
@@ -193,9 +201,6 @@ public class GetAPIData {
                 postCodeResponse.setPostCode2((String)address.get("postCode2"));
                 postCodeResponse.setCountry((String)address.get("country"));
                 postCodeResponse.setStreetName((String)address.get("streetName"));
-                //String addressJSON = new Gson().toJson(address);
-                //PostCodeResponse fullAddress = new Gson().fromJson(addressJSON,PostCodeResponse.class);
-                //postCode = (String) address.get("postCode1");
             } else {
                 System.out.println(urlConnection.getResponseMessage());
             }
@@ -205,121 +210,31 @@ public class GetAPIData {
         return postCodeResponse;
     }
 
+    private static String checkToken(String tokenEnv){
+        String tokenReturn = "";
+        if(SANDBOX_TOKEN.equals(tokenEnv)){
+            if (System.currentTimeMillis() - PreferencesUtils.getTokenSetTime() > 720000){
+                tokenReturn = GetAPIData.getToken(SANDBOX_OAUTH_URL , SANDBOX_APIKEY_SECRET);
+                PreferencesUtils.setSandboxToken(tokenReturn);
+            } else if(!PreferencesUtils.getSandboxToken().isEmpty()){
+                tokenReturn = PreferencesUtils.getSandboxToken();
+            } else {
+                tokenReturn = GetAPIData.getToken(SANDBOX_OAUTH_URL , SANDBOX_APIKEY_SECRET);
+                PreferencesUtils.setSandboxToken(tokenReturn);
+            }
+        }
 
-    /*static String responseJson = "{\n" +
-            "\t\"fromAddress\": {\n" +
-            "\t\t\"company\": \"Pitney Bowes Inc.\",\n" +
-            "\t\t\"name\": \"sender_fname\",\n" +
-            "\t\t\"phone\": \"2032032033\",\n" +
-            "\t\t\"email\": \"sender@email.com\",\n" +
-            "\t\t\"residential\": true,\n" +
-            "\t\t\"addressLines\": [\n" +
-            "\t\t\t\"27 Waterview Drive\"\n" +
-            "\t\t],\n" +
-            "\t\t\"cityTown\": \"Shelton\",\n" +
-            "\t\t\"stateProvince\": \"CT\",\n" +
-            "\t\t\"postalCode\": \"06484\",\n" +
-            "\t\t\"countryCode\": \"US\",\n" +
-            "\t\t\"status\": \"NOT_CHANGED\"\n" +
-            "\t},\n" +
-            "\t\"toAddress\": {\n" +
-            "\t\t\"company\": \"Glorias Co.\",\n" +
-            "\t\t\"name\": \"Peter\",\n" +
-            "\t\t\"phone\": \"2222222222\",\n" +
-            "\t\t\"email\": \"receiver@email.com\",\n" +
-            "\t\t\"residential\": true,\n" +
-            "\t\t\"addressLines\": [\n" +
-            "\t\t\t\"1 Sullivan SQ\"\n" +
-            "\t\t],\n" +
-            "\t\t\"cityTown\": \"Berwick\",\n" +
-            "\t\t\"postalCode\": \"03901\",\n" +
-            "\t\t\"countryCode\": \"US\",\n" +
-            "\t\t\"status\": \"NOT_CHANGED\"\n" +
-            "\t},\n" +
-            "\t\"parcel\": {\n" +
-            "\t\t\"weight\": {\n" +
-            "\t\t\t\"unitOfMeasurement\": \"OZ\",\n" +
-            "\t\t\t\"weight\": 1\n" +
-            "\t\t},\n" +
-            "\t\t\"dimension\": {\n" +
-            "\t\t\t\"unitOfMeasurement\": \"IN\",\n" +
-            "\t\t\t\"length\": 6,\n" +
-            "\t\t\t\"width\": 0.25,\n" +
-            "\t\t\t\"height\": 4,\n" +
-            "\t\t\t\"" +
-            "\": 0.002\n" +
-            "\t\t}\n" +
-            "\t},\n" +
-            "\t\"rates\": [\n" +
-            "\t\t{\n" +
-            "\t\t\t\"carrier\": \"usps\",\n" +
-            "\t\t\t\"parcelType\": \"PKG\",\n" +
-            "\t\t\t\"specialServices\": [\n" +
-            "\t\t\t\t{\n" +
-            "\t\t\t\t\t\"specialServiceId\": \"Ins\",\n" +
-            "\t\t\t\t\t\"inputParameters\": [\n" +
-            "\t\t\t\t\t\t{\n" +
-            "\t\t\t\t\t\t\t\"name\": \"INPUT_VALUE\",\n" +
-            "\t\t\t\t\t\t\t\"value\": \"50\"\n" +
-            "\t\t\t\t\t\t}\n" +
-            "\t\t\t\t\t],\n" +
-            "\t\t\t\t\t\"fee\": 0\n" +
-            "\t\t\t\t},\n" +
-            "\t\t\t\t{\n" +
-            "\t\t\t\t\t\"specialServiceId\": \"DelCon\",\n" +
-            "\t\t\t\t\t\"inputParameters\": [\n" +
-            "\t\t\t\t\t\t{\n" +
-            "\t\t\t\t\t\t\t\"name\": \"INPUT_VALUE\",\n" +
-            "\t\t\t\t\t\t\t\"value\": \"0\"\n" +
-            "\t\t\t\t\t\t}\n" +
-            "\t\t\t\t\t],\n" +
-            "\t\t\t\t\t\"fee\": 0\n" +
-            "\t\t\t\t}\n" +
-            "\t\t\t],\n" +
-            "\t\t\t\"serviceId\": \"PM\",\n" +
-            "\t\t\t\"rateTypeId\": \"\",\n" +
-            "\t\t\t\"deliveryCommitment\": {\n" +
-            "\t\t\t\t\"minEstimatedNumberOfDays\": \"2\",\n" +
-            "\t\t\t\t\"maxEstimatedNumberOfDays\": \"2\",\n" +
-            "\t\t\t\t\"estimatedDeliveryDateTime\": \"2017-10-09\",\n" +
-            "\t\t\t\t\"guarantee\": \"NONE\",\n" +
-            "\t\t\t\t\"additionalDetails\": \"By end of Day\"\n" +
-            "\t\t\t},\n" +
-            "\t\t\t\"dimensionalWeight\": {\n" +
-            "\t\t\t\t\"weight\": 0,\n" +
-            "\t\t\t\t\"unitOfMeasurement\": \"OZ\"\n" +
-            "\t\t\t},\n" +
-            "\t\t\t\"baseCharge\": 6.26,\n" +
-            "\t\t\t\"totalCarrierCharge\": 6.26,\n" +
-            "\t\t\t\"alternateBaseCharge\": 6.46,\n" +
-            "\t\t\t\"destinationZone\": \"3\",\n" +
-            "\t\t\t\"alternateTotalCharge\": 6.46\n" +
-            "\t\t}\n" +
-            "\t],\n" +
-            "\t\"shipmentOptions\": [\n" +
-            "\t\t{\n" +
-            "\t\t\t\"name\": \"SHIPPER_BASE_CHARGE\",\n" +
-            "\t\t\t\"value\": \"6.46\"\n" +
-            "\t\t},\n" +
-            "\t\t{\n" +
-            "\t\t\t\"name\": \"SHIPPER_TOTAL_CHARGE\",\n" +
-            "\t\t\t\"value\": \"6.46\"\n" +
-            "\t\t}\n" +
-            "\t]\n" +
-            "}";
-
-    *//**
-     * As Actual API is not accessible, so created an dummy response
-     *
-     * @param request
-     * @return
-     *//*
-
-    public static RateResponse getDummyRates(String request) {
-        Gson g = new Gson();
-        RateResponse rateResponse = g.fromJson(responseJson, RateResponse.class);
-        return rateResponse;
-    }*/
-
-
+        if(PROD_TOKEN.equals(tokenEnv)){
+            if (System.currentTimeMillis() - PreferencesUtils.getTokenSetTime() > 720000){
+                tokenReturn = GetAPIData.getToken(PROD_OAUTH_URL , PROD_APIKEY_SECRET);
+                PreferencesUtils.setProdToken(tokenReturn);
+            } else if(!PreferencesUtils.getProdToken().isEmpty()){
+                tokenReturn = PreferencesUtils.getProdToken();
+            } else {
+                tokenReturn = GetAPIData.getToken(PROD_OAUTH_URL , PROD_APIKEY_SECRET);
+                PreferencesUtils.setProdToken(tokenReturn);
+            }
+        }
+        return tokenReturn;
+    }
 }

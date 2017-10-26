@@ -286,8 +286,9 @@ public class MainActivity extends Activity
                     rateRequest = appService.prepareRateAndShipmentRequest(eventDetails.getToAddress(), "");
                     rateResponse = GetAPIData.getRates(rateRequest);
                     eventInfo = appService.prepareSuggestion(rateResponse, eventDetails);
-                    //RateRequest shipmentRequest =  appService.prepareRateAndShipmentRequest(eventDetails, "PM");
+                    //RateRequest shipmentRequest =  appService.prepareRateAndShipmentRequest(eventDetails.getToAddress(), "PM");
                     //RateResponse shipmentResponse = GetAPIData.getShipmentLabel(shipmentRequest);
+                    //appService.markEventAsCancelled(eventInfo.getEventId(),mService);
                     listEventInfo.add(eventInfo);
                 }
                 return listEventInfo;
