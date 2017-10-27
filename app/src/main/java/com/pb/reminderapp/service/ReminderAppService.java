@@ -118,21 +118,21 @@ public class ReminderAppService {
         if (dateCheckMailClass(eventInfo, "STDPOST", formattedRequiredDeliveryDate, dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate())){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("STDPOST");
-            shippingOption.setNote("Mail Class : Standard Post, Estimated Delivery Date : " + dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("STDPOST").getTotalCarrierCharge());
+            shippingOption.setNote("Standard Post,   Delivery Date : " + dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate()  + ",  Amount : $" + dayAndRateMap.get("STDPOST").getTotalCarrierCharge());
             eventInfo.setStandardShippingOption(shippingOption);
         }
 
         if ((dateCheckMailClass(eventInfo, "FCM", formattedRequiredDeliveryDate, dayAndRateMap.get("FCM").getEstimatedDeliveryDate())) || null !=  eventInfo.getStandardShippingOption()){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("FCM");
-            shippingOption.setNote("Mail Class : First Class, Estimated Delivery Date : " + dayAndRateMap.get("FCM").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("FCM").getTotalCarrierCharge());
+            shippingOption.setNote("First Class,  Delivery Date : " + dayAndRateMap.get("FCM").getEstimatedDeliveryDate()  + ",  Amount : $" + dayAndRateMap.get("FCM").getTotalCarrierCharge());
             eventInfo.setFmShippingOption(shippingOption);
         }
 
         if ((dateCheckMailClass(eventInfo, "PM", formattedRequiredDeliveryDate, dayAndRateMap.get("PM").getEstimatedDeliveryDate())) || null !=  eventInfo.getStandardShippingOption()){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("PM");
-            shippingOption.setNote("Mail Class : Priority Mail, Estimated Delivery Date : " + dayAndRateMap.get("PM").getEstimatedDeliveryDate()  + " AMOUNT : $" + dayAndRateMap.get("PM").getTotalCarrierCharge());
+            shippingOption.setNote("Priority Mail,  Delivery Date : " + dayAndRateMap.get("PM").getEstimatedDeliveryDate()  + ",  Amount : $" + dayAndRateMap.get("PM").getTotalCarrierCharge());
             eventInfo.setPmShippingOption(shippingOption);
         }
         if (eventInfo.isStandardPostTooLate() && eventInfo.isPriorityMailTooLate() && eventInfo.isFirstClassMailTooLate()){

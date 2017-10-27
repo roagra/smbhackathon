@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/header"
+
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_55"
+    android:background="@drawable/blue_magenta_gradient_left_to_right">
+
+    <ImageView
+        android:id="@+id/image_view_header_icon"
+        android:layout_width="@dimen/dp_30"
+        android:layout_marginTop="@dimen/dp_15"
+        android:layout_height="@dimen/dp_30"
+        android:layout_alignParentLeft="true"
+        android:paddingBottom="@dimen/dp_10"
+        android:scaleType="fitCenter"
+        android:src="@drawable/back" />
+
+    <TextView
+        android:id="@+id/textView_screen_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="@dimen/dp_80"
+        android:layout_marginRight="@dimen/dp_110"
+        android:layout_toRightOf="@+id/image_view_header_icon"
+        android:gravity="center"
+        android:shadowColor="@color/pb_gray_300_button_pressed"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        android:text="Printed Lables Report"
+        android:textColor="@color/pb_gray_50_white"
+        android:textSize="@dimen/sp_16" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_0.5"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/dp_1"
+        android:background="@drawable/blue_magenta_gradient_left_to_right"
+        android:elevation="@dimen/dp_1" />
+</RelativeLayout>

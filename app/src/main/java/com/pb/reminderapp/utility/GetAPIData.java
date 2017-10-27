@@ -25,10 +25,10 @@ public class GetAPIData {
     private static final String SANDBOX_SHIPPING_LABELS_API_URL = "https://api-sandbox.pitneybowes.com/shippingservices/v1/shipments?includeDeliveryCommitment=true";
     public static final String SANDBOX_TOKEN = "SANDBOX_TOKEN";
     public static final String PROD_TOKEN = "PROD_TOKEN";
-    private static final String SANDBOX_OAUTH_URL = "https://api-sandbox.pitneybowes.com/oauth/token";
-    private static final String PROD_OAUTH_URL = "https://api.pitneybowes.com/oauth/token";
-    private static final String SANDBOX_APIKEY_SECRET = "ZENzQXRBa2Y5QXVSS0gxVlk1eFpYdlZrSGJmTWxoUEw6S1l6WjJmTDJIYVJtbFlKQQ==";
-    private static final String PROD_APIKEY_SECRET = "NWtLRDdURFR6OVFUZ2kwQ0JGV1dtbW9QVmR5VDBIOGI6QXpJT3NPdEEyV3gzRnZMcw==";
+    public static final String SANDBOX_OAUTH_URL = "https://api-sandbox.pitneybowes.com/oauth/token";
+    public static final String PROD_OAUTH_URL = "https://api.pitneybowes.com/oauth/token";
+    public static final String SANDBOX_APIKEY_SECRET = "VFRVTHVPWkdUdzNVWGRtYkJ2NTRYNVBQbzBYc2g2MDA6UWNjR25Fa09lcElEQkNuWA==";
+    public static final String PROD_APIKEY_SECRET = "R3pWN01BOGd1Yk1hdHh4aERuaE1QaDNJcmhHZ0FyQzY6S3VwM0dMU1FvTXNCVWRhdQ==";
 
 /*    private static EventDetails eventDetails;
 
@@ -186,21 +186,24 @@ public class GetAPIData {
                 }
                 br.close();
                 JSONObject jObject = new JSONObject(sb.toString());
-                JSONArray jArray =  (JSONArray)jObject.get("candidates");
-                JSONObject jObject2 = (JSONObject) jArray.get(0);
-                JSONObject address = (JSONObject) jObject2.get("address");
-                postCodeResponse.setAddressLastLine((String)address.get("addressLastLine"));
-                postCodeResponse.setAddressNumber((String)address.get("addressNumber"));
-                postCodeResponse.setAreaName1((String)address.get("areaName1"));
-                postCodeResponse.setAreaName2((String)address.get("areaName2"));
-                postCodeResponse.setAreaName3((String)address.get("areaName3"));
-                postCodeResponse.setAreaName4((String)address.get("areaName4"));
-                postCodeResponse.setMainAddressLine((String)address.get("mainAddressLine"));
-                postCodeResponse.setPlaceName((String)address.get("placeName"));
-                postCodeResponse.setPostCode1((String)address.get("postCode1"));
-                postCodeResponse.setPostCode2((String)address.get("postCode2"));
-                postCodeResponse.setCountry((String)address.get("country"));
-                postCodeResponse.setStreetName((String)address.get("streetName"));
+                Integer totalMatches = (Integer)jObject.get("totalMatches");
+                if(totalMatches > 0) {
+                    JSONArray jArray = (JSONArray) jObject.get("candidates");
+                    JSONObject jObject2 = (JSONObject) jArray.get(0);
+                    JSONObject address = (JSONObject) jObject2.get("address");
+                    postCodeResponse.setAddressLastLine((String) address.get("addressLastLine"));
+                    postCodeResponse.setAddressNumber((String) address.get("addressNumber"));
+                    postCodeResponse.setAreaName1((String) address.get("areaName1"));
+                    postCodeResponse.setAreaName2((String) address.get("areaName2"));
+                    postCodeResponse.setAreaName3((String) address.get("areaName3"));
+                    postCodeResponse.setAreaName4((String) address.get("areaName4"));
+                    postCodeResponse.setMainAddressLine((String) address.get("mainAddressLine"));
+                    postCodeResponse.setPlaceName((String) address.get("placeName"));
+                    postCodeResponse.setPostCode1((String) address.get("postCode1"));
+                    postCodeResponse.setPostCode2((String) address.get("postCode2"));
+                    postCodeResponse.setCountry((String) address.get("country"));
+                    postCodeResponse.setStreetName((String) address.get("streetName"));
+                }
             } else {
                 System.out.println(urlConnection.getResponseMessage());
             }

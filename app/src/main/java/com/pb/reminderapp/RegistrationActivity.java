@@ -64,10 +64,10 @@ public class RegistrationActivity extends Activity
     private static final String WAIT_TEXT = "Getting Shipment Details from Google Calender....";
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = {CalendarScopes.CALENDAR};
-    private static final String SANDBOX_OAUTH_URL = "https://api-sandbox.pitneybowes.com/oauth/token";
-    private static final String PROD_OAUTH_URL = "https://api.pitneybowes.com/oauth/token";
-    private static final String SANDBOX_APIKEY_SECRET = "ZENzQXRBa2Y5QXVSS0gxVlk1eFpYdlZrSGJmTWxoUEw6S1l6WjJmTDJIYVJtbFlKQQ==";
-    private static final String PROD_APIKEY_SECRET = "NWtLRDdURFR6OVFUZ2kwQ0JGV1dtbW9QVmR5VDBIOGI6QXpJT3NPdEEyV3gzRnZMcw==";
+    //private static final String SANDBOX_OAUTH_URL = "https://api-sandbox.pitneybowes.com/oauth/token";
+    //private static final String PROD_OAUTH_URL = "https://api.pitneybowes.com/oauth/token";
+    //private static final String SANDBOX_APIKEY_SECRET = "VFRVTHVPWkdUdzNVWGRtYkJ2NTRYNVBQbzBYc2g2MDA6UWNjR25Fa09lcElEQkNuWA==";
+    //private static final String PROD_APIKEY_SECRET = "R3pWN01BOGd1Yk1hdHh4aERuaE1QaDNJcmhHZ0FyQzY6S3VwM0dMU1FvTXNCVWRhdQ==";
 
 
     /**
@@ -114,8 +114,8 @@ public class RegistrationActivity extends Activity
 
     private void attemptLogin() {
         long currentTimeInMillis = System.currentTimeMillis();
-        String sandboxToken = GetAPIData.getToken(SANDBOX_OAUTH_URL , SANDBOX_APIKEY_SECRET);
-        String prodToken = GetAPIData.getToken(PROD_OAUTH_URL ,PROD_APIKEY_SECRET);
+        String sandboxToken = GetAPIData.getToken(GetAPIData.SANDBOX_OAUTH_URL , GetAPIData.SANDBOX_APIKEY_SECRET);
+        String prodToken = GetAPIData.getToken(GetAPIData.PROD_OAUTH_URL ,GetAPIData.PROD_APIKEY_SECRET);
         PreferencesUtils.saveRegistrationPreference("", addressView.getText().
                 toString(), firstNameView.getText().toString(), lastNameView.getText().toString(), sandboxToken, prodToken, currentTimeInMillis);
         Intent intent = new Intent(getContext(), LabelCountActivity.class);

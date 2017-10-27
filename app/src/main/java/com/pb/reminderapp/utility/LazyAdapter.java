@@ -91,6 +91,9 @@ public class LazyAdapter extends BaseAdapter {
         if (eventInfo.getStandardShippingOption() != null) {
             standard = new RadioButton(activity.getApplicationContext());
             standard.setTextSize(11);
+//            standard.setScaleX(0.5f);
+//            standard.setScaleY(0.5f);
+            //standard.setEnabled(eventInfo.getStandardShippingOption().isSelected());
             standard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -113,6 +116,9 @@ public class LazyAdapter extends BaseAdapter {
         if (eventInfo.getFmShippingOption() != null) {
             fm = new RadioButton(activity.getApplicationContext());
             fm.setTextSize(11);
+//            fm.setScaleX(0.5f);
+//            fm.setScaleY(0.5f);
+            //fm.setEnabled(eventInfo.getFmShippingOption().isSelected());
             fm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -134,6 +140,9 @@ public class LazyAdapter extends BaseAdapter {
         if (eventInfo.getPmShippingOption() != null) {
             pm = new RadioButton(activity.getApplicationContext());
             pm.setTextSize(11);
+//            pm.setScaleX(0.5f);
+//            pm.setScaleY(0.5f);
+            //fm.setEnabled(eventInfo.getPmShippingOption().isSelected());
             pm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

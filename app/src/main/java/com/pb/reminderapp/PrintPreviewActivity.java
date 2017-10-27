@@ -108,7 +108,7 @@ public class PrintPreviewActivity extends Activity {
             WebView webView = new WebView(printPreviewActivity);
             webView.getSettings().setJavaScriptEnabled(true);
             pdf = "https://web-prt3.gcs.pitneybowes.com/usps/325584758/outbound/label/3a58503e50d848ff82d3f9e60d99ba4d.pdf";
-            webView.loadUrl("http://drive.google.com/viewerng/viewer?embedded=true&url=" + pdf);
+            webView.loadUrl(pdf);
             baseContainer.addView(webView);
             baseContainer.invalidate();
         }
