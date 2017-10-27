@@ -352,8 +352,20 @@ public class ReminderAppService {
 
     public RateRequest prepareRateAndShipmentRequest(String toAddressFromEvent , String serviceId) {
         RateRequest rateRequest = new RateRequest();
-        PostCodeResponse toAddress = GetAPIData.getPostCode(toAddressFromEvent);
-        PostCodeResponse fromAddress = GetAPIData.getPostCode(PreferencesUtils.getAddress());
+        PostCodeResponse toAddress;
+        PostCodeResponse fromAddress;
+        toAddress = PreferencesUtils.getPostCodeResponse(toAddressFromEvent);
+        fromAddress = PreferencesUtils.getPostCodeResponse(PreferencesUtils.getAddress());
+
+        if(null == toAddress) {
+            toAddress = GetAPIData.getPostCode(toAddressFromEvent);
+            PreferencesUtils.savePostCodeResponse(toAddressFromEvent,toAddress);
+        }
+
+        if(null == fromAddress){
+            fromAddress = GetAPIData.getPostCode(PreferencesUtils.getAddress());
+            PreferencesUtils.savePostCodeResponse(PreferencesUtils.getAddress(),fromAddress);
+        }
 
         // Setting From Address
         RateRequest.Address fromAddressObj = new RateRequest.Address();

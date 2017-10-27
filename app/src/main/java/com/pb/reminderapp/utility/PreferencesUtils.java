@@ -3,8 +3,11 @@ package com.pb.reminderapp.utility;
 import android.content.SharedPreferences;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.gson.Gson;
 import com.pb.reminderapp.model.EventInfo;
+import com.pb.reminderapp.model.PostCodeResponse;
 
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -42,6 +45,20 @@ public class PreferencesUtils {
         PreferencesUtils.sharedpreferences = sharedpreferences;
     }
 
+    public static void savePostCodeResponse(String address, PostCodeResponse postCoderesponse){
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        Gson gson = new Gson();
+        String postCoderesponseJson = gson.toJson(postCoderesponse);
+        editor.putString(address,postCoderesponseJson);
+        editor.commit();
+    }
+
+    public static PostCodeResponse getPostCodeResponse(String address){
+        Gson gson = new Gson();
+        String postCoderesponseJson =  sharedpreferences.getString(address, "");
+        PostCodeResponse postCodeResponse = gson.fromJson(postCoderesponseJson, PostCodeResponse.class);
+        return postCodeResponse;
+    }
 
     public static void saveRegistrationPreference(String emailId, String address, String firstName, String lastName, String sandboxToken, String prodToken, long currentTimeInMillis) {
         SharedPreferences.Editor editor = sharedpreferences.edit();
