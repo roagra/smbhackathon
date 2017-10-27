@@ -70,7 +70,7 @@ public class PrintPreviewActivity extends Activity {
                     EventInfo.ShippingOption shippingOption = getSelectedShippingOption(eventInfo);
                     //RateRequest shipmentRequest = appService.prepareRateAndShipmentRequest(eventInfo.getToAddress(), shippingOption.getMailClass());
                     //RateResponse shipmentResponse = GetAPIData.getShipmentLabel(shipmentRequest);
-                    //appService.markEventAsCancelled(eventInfo.getEventId(),mService);
+                    //appService.markEventAsDone(eventInfo.getEventId(),mService);
                     //rateResponseList.add(shipmentResponse);
                 }
             } catch (Exception e) {

@@ -82,7 +82,7 @@ public class ReminderAppService {
     }
 
 
-    public void markEventAsCancelled(String eventId, com.google.api.services.calendar.Calendar mService) throws IOException {
+    public void markEventAsDone(String eventId, com.google.api.services.calendar.Calendar mService) throws IOException {
         Event event = mService.events().get("primary", eventId).execute();
         event.setStatus("tentative");
         //String eventColor = event.getColorId();

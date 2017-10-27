@@ -1,6 +1,7 @@
 package com.pb.reminderapp.utility;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,13 +51,15 @@ public class LazyAdapter extends BaseAdapter {
         if (convertView == null)
             vi = inflater.inflate(R.layout.list_row, null);
 
+        final EventInfo eventInfo = data.get(position);
         TextView title = (TextView) vi.findViewById(R.id.title); // title
+        if (eventInfo.isSevere()) {
+            title.setTextColor(Color.RED);
+        }
         TextView address = (TextView) vi.findViewById(R.id.address); // To Address
         //TextView recommendation = (TextView) vi.findViewById(R.id.recommendation); // artist name
         TextView duration = (TextView) vi.findViewById(R.id.duration); // duration
 
-
-        final EventInfo eventInfo = data.get(position);
 
 //        // Setting all values in listview
 //        ImageView thumb_image = (ImageView) vi.findViewById(R.id.list_image); // thumb image
