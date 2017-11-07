@@ -146,6 +146,24 @@ public class EventInfo {
         private String mailClass;
         private String note;
         private boolean isSelected;
+        private int sequence;
+        private double amount;
+
+        public double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(double amount) {
+            this.amount = amount;
+        }
+
+        public int getSequence() {
+            return sequence;
+        }
+
+        public void setSequence(int sequence) {
+            this.sequence = sequence;
+        }
 
         public String getMailClass() {
             return mailClass;

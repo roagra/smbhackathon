@@ -118,6 +118,7 @@ public class ReminderAppService {
         if (dateCheckMailClass(eventInfo, "STDPOST", formattedRequiredDeliveryDate, dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate())){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("STDPOST");
+            shippingOption.setAmount(dayAndRateMap.get("STDPOST").getTotalCarrierCharge());
             shippingOption.setNote("Standard Post,   Delivery Date : " + dayAndRateMap.get("STDPOST").getEstimatedDeliveryDate()  + ",  Amount : $" + dayAndRateMap.get("STDPOST").getTotalCarrierCharge());
             eventInfo.setStandardShippingOption(shippingOption);
         }
@@ -125,6 +126,7 @@ public class ReminderAppService {
         if ((dateCheckMailClass(eventInfo, "FCM", formattedRequiredDeliveryDate, dayAndRateMap.get("FCM").getEstimatedDeliveryDate())) || null !=  eventInfo.getStandardShippingOption()){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("FCM");
+            shippingOption.setAmount(dayAndRateMap.get("FCM").getTotalCarrierCharge());
             shippingOption.setNote("First Class,  Delivery Date : " + dayAndRateMap.get("FCM").getEstimatedDeliveryDate()  + ",  Amount : $" + dayAndRateMap.get("FCM").getTotalCarrierCharge());
             eventInfo.setFmShippingOption(shippingOption);
         }
@@ -132,6 +134,7 @@ public class ReminderAppService {
         if ((dateCheckMailClass(eventInfo, "PM", formattedRequiredDeliveryDate, dayAndRateMap.get("PM").getEstimatedDeliveryDate())) || null !=  eventInfo.getStandardShippingOption()){
             EventInfo.ShippingOption shippingOption = new EventInfo.ShippingOption();
             shippingOption.setMailClass("PM");
+            shippingOption.setAmount(dayAndRateMap.get("PM").getTotalCarrierCharge());
             shippingOption.setNote("Priority Mail,  Delivery Date : " + dayAndRateMap.get("PM").getEstimatedDeliveryDate()  + ",  Amount : $" + dayAndRateMap.get("PM").getTotalCarrierCharge());
             eventInfo.setPmShippingOption(shippingOption);
         }
@@ -142,6 +145,9 @@ public class ReminderAppService {
         if (eventInfo.isStandardPostTooEarly() && eventInfo.isPriorityMailTooEarly() && eventInfo.isFirstClassMailTooEarly()){
             eventInfo.setEarly(true);
         }
+
+
+
         return eventInfo;
     }
 

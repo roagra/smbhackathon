@@ -20,7 +20,7 @@
             android:layout_centerHorizontal="true"
             android:textColor="@color/pb_gray_50_white"
             android:textSize="@dimen/sp_16"
-            android:text="@string/screen_title"
+            android:text="SHIPMINDERS"
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="2"
