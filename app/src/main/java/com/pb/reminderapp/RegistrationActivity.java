@@ -14,20 +14,30 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
+import com.pb.reminderapp.model.EventInfo;
+import com.pb.reminderapp.model.RateResponse;
+import com.pb.reminderapp.service.ReminderAppService;
 import com.pb.reminderapp.utility.GetAPIData;
 import com.pb.reminderapp.utility.PreferencesUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -113,15 +123,65 @@ public class RegistrationActivity extends Activity
     }
 
     private void attemptLogin() {
-        long currentTimeInMillis = System.currentTimeMillis();
-        String sandboxToken = GetAPIData.getToken(GetAPIData.SANDBOX_OAUTH_URL , GetAPIData.SANDBOX_APIKEY_SECRET);
-        String prodToken = GetAPIData.getToken(GetAPIData.PROD_OAUTH_URL ,GetAPIData.PROD_APIKEY_SECRET);
-        PreferencesUtils.saveRegistrationPreference("", addressView.getText().
-                toString(), firstNameView.getText().toString(), lastNameView.getText().toString(), sandboxToken, prodToken, currentTimeInMillis);
-        Intent intent = new Intent(getContext(), LabelCountActivity.class);
-        getContext().startActivity(intent);
+        new LoginTasks().execute();
+
 
     }
+
+    private class LoginTasks extends AsyncTask<Void, Void, Boolean> {
+        private com.google.api.services.calendar.Calendar mService = null;
+        private Exception mLastError = null;
+        long currentTimeInMillis =0;
+        String sandboxToken ="";
+        String prodToken = "";
+
+        LoginTasks() {
+
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            ReminderAppService appService = new ReminderAppService();
+            List<RateResponse> rateResponseList = new ArrayList();
+            try {
+                 currentTimeInMillis = System.currentTimeMillis();
+                 sandboxToken = GetAPIData.getToken(GetAPIData.SANDBOX_OAUTH_URL , GetAPIData.SANDBOX_APIKEY_SECRET);
+                 prodToken = GetAPIData.getToken(GetAPIData.PROD_OAUTH_URL ,GetAPIData.PROD_APIKEY_SECRET);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                mLastError = e;
+                cancel(true);
+                return true;
+            }
+            return true;
+        }
+
+
+
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean output) {
+            PreferencesUtils.saveRegistrationPreference("", addressView.getText().
+                    toString(), firstNameView.getText().toString(), lastNameView.getText().toString(), sandboxToken, prodToken, currentTimeInMillis);
+
+            Intent intent = new Intent(getContext(), LabelCountActivity.class);
+            getContext().startActivity(intent);
+        }
+
+        @Override
+        protected void onCancelled() {
+
+
+        }
+    }
+
+
 
 
     private void getResultsFromApi() {
@@ -135,6 +195,7 @@ public class RegistrationActivity extends Activity
             mProgress.hide();
             if (PreferencesUtils.isRegistrationExist()) {
                 Intent intent = new Intent(getContext(), LabelCountActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getContext().startActivity(intent);
             }
         }

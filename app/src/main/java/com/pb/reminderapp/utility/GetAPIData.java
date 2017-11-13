@@ -1,5 +1,7 @@
 package com.pb.reminderapp.utility;
 
+import android.net.Uri;
+
 import com.google.gson.Gson;
 import com.pb.reminderapp.model.EventDetails;
 import com.pb.reminderapp.model.PostCodeResponse;
@@ -10,10 +12,17 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by ro003ag on 10/6/2017.
@@ -169,11 +178,12 @@ public class GetAPIData {
     public static PostCodeResponse getPostCode(String toAddress) {
         PostCodeResponse postCodeResponse = new PostCodeResponse();
         try {
-            URL url = new URL("https://api.pitneybowes.com/location-intelligence/geocode-service/v1/transient/premium/geocode?country=USA&mainAddress="+ toAddress +"&matchMode=Standard&fallbackGeo=true&fallbackPostal=true&maxCands=1&streetOffset=7&streetOffsetUnits=METERS&cornerOffset=7&cornerOffsetUnits=METERS");
+            URL url = new URL("http://api.pitneybowes.com/location-intelligence/geocode-service/v1/transient/premium/geocode?country=USA&mainAddress="+ toAddress +"&matchMode=Standard&fallbackGeo=true&fallbackPostal=true&maxCands=1&streetOffset=7&streetOffsetUnits=METERS&cornerOffset=7&cornerOffsetUnits=METERS");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setRequestProperty("Authorization", "Bearer " + checkToken(PROD_TOKEN));
             urlConnection.setRequestProperty("Content-Type", "application/json");
+
             //display what returns the GET request
             StringBuilder sb = new StringBuilder();
             int HttpResult = urlConnection.getResponseCode();
@@ -211,6 +221,23 @@ public class GetAPIData {
             e.printStackTrace();
         }
         return postCodeResponse;
+    }
+
+    private static String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException{
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        for(Map.Entry<String, String> entry : params.entrySet()){
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
     }
 
     private static String checkToken(String tokenEnv){

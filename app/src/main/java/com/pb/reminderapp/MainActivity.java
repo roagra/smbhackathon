@@ -115,6 +115,7 @@ public class MainActivity extends Activity
                 PreferencesUtils.setSelectedEventInfo(selectedEventInfo);
                 PreferencesUtils.setCredentials(mCredential);
                 Intent intent = new Intent(getContext(), PrintPreviewActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getContext().startActivity(intent);
             }
         });
