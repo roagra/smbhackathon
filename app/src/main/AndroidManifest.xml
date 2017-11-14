@@ -8,14 +8,14 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/pb_icon"
+        android:icon="@mipmap/ship_minders"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/pb_icon"
+        android:roundIcon="@mipmap/ship_minders"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".SplashScreenActivity"
-            android:label="Reminder App through Google Calendar API Android"
+            android:label="SHIPMINDERS"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +25,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="Reminder App through Google Calendar API Android"
+            android:label="SHIPMINDERS"
             android:screenOrientation="landscape" />
         <activity android:name=".PrintPreviewActivity" android:screenOrientation="landscape" ></activity>
         <activity android:name=".RegistrationActivity" android:screenOrientation="landscape" ></activity>

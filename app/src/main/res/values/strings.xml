@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Shipping Reminder</string>
+    <string name="app_name">SHIPMINDERS</string>
     <string name="title_activity_maps">Map</string>
     <string name="action_settings">Refresh</string>
     <string name="title_activity_register">Register</string>
