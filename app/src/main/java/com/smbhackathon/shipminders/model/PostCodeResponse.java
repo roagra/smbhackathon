@@ -1,4 +1,4 @@
-package com.pb.reminderapp.model;
+package com.smbhackathon.shipminders.model;
 
 import com.google.gson.annotations.SerializedName;
 

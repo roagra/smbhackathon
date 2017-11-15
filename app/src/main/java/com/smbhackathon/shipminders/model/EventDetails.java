@@ -1,4 +1,4 @@
-package com.pb.reminderapp.model;
+package com.smbhackathon.shipminders.model;
 
 /**
  * Created by ro003ag on 10/7/2017.

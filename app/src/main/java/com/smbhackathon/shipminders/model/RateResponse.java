@@ -1,4 +1,4 @@
-package com.pb.reminderapp.model;
+package com.smbhackathon.shipminders.model;
 
 import java.util.List;
 

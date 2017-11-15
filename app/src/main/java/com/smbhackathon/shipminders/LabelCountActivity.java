@@ -1,4 +1,4 @@
-package com.pb.reminderapp;
+package com.smbhackathon.shipminders;
 
 /**
  * Created by ro003ag on 10/8/2017.
@@ -38,15 +38,15 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.gson.Gson;
-import com.pb.reminderapp.model.EventDescription;
-import com.pb.reminderapp.model.EventDetails;
-import com.pb.reminderapp.model.EventInfo;
-import com.pb.reminderapp.model.RateRequest;
-import com.pb.reminderapp.model.RateResponse;
-import com.pb.reminderapp.service.ReminderAppService;
-import com.pb.reminderapp.utility.GetAPIData;
-import com.pb.reminderapp.utility.LabelCountListAdapter;
-import com.pb.reminderapp.utility.LazyAdapter;
+import com.smbhackathon.shipminders.model.EventDescription;
+import com.smbhackathon.shipminders.model.EventDetails;
+import com.smbhackathon.shipminders.model.EventInfo;
+import com.smbhackathon.shipminders.model.RateRequest;
+import com.smbhackathon.shipminders.model.RateResponse;
+import com.smbhackathon.shipminders.service.ReminderAppService;
+import com.smbhackathon.shipminders.utility.GetAPIData;
+import com.smbhackathon.shipminders.utility.LabelCountListAdapter;
+import com.smbhackathon.shipminders.utility.LazyAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

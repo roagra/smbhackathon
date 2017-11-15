@@ -1,4 +1,4 @@
-package com.pb.reminderapp;
+package com.smbhackathon.shipminders;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.pb.reminderapp", appContext.getPackageName());
+        assertEquals("com.smbhackathon.shipminders", appContext.getPackageName());
     }
 }

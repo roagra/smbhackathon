@@ -1,4 +1,4 @@
-package com.pb.reminderapp;
+package com.smbhackathon.shipminders;
 
 
 import android.app.Activity;

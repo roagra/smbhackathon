@@ -1,12 +1,12 @@
-package com.pb.reminderapp.utility;
+package com.smbhackathon.shipminders.utility;
 
 import android.net.Uri;
 
 import com.google.gson.Gson;
-import com.pb.reminderapp.model.EventDetails;
-import com.pb.reminderapp.model.PostCodeResponse;
-import com.pb.reminderapp.model.RateRequest;
-import com.pb.reminderapp.model.RateResponse;
+import com.smbhackathon.shipminders.model.EventDetails;
+import com.smbhackathon.shipminders.model.PostCodeResponse;
+import com.smbhackathon.shipminders.model.RateRequest;
+import com.smbhackathon.shipminders.model.RateResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

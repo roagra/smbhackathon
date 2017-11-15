@@ -1,4 +1,4 @@
-package com.pb.reminderapp;
+package com.smbhackathon.shipminders;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -13,13 +13,13 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.gson.Gson;
-import com.pb.reminderapp.model.EventDetails;
-import com.pb.reminderapp.model.EventInfo;
-import com.pb.reminderapp.model.RateRequest;
-import com.pb.reminderapp.model.RateResponse;
-import com.pb.reminderapp.service.ReminderAppService;
-import com.pb.reminderapp.utility.GetAPIData;
-import com.pb.reminderapp.utility.PreferencesUtils;
+import com.smbhackathon.shipminders.model.EventDetails;
+import com.smbhackathon.shipminders.model.EventInfo;
+import com.smbhackathon.shipminders.model.RateRequest;
+import com.smbhackathon.shipminders.model.RateResponse;
+import com.smbhackathon.shipminders.service.ReminderAppService;
+import com.smbhackathon.shipminders.utility.GetAPIData;
+import com.smbhackathon.shipminders.utility.PreferencesUtils;
 
 import java.util.ArrayList;
 import java.util.List;

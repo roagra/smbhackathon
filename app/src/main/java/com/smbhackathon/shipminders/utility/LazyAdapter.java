@@ -1,4 +1,4 @@
-package com.pb.reminderapp.utility;
+package com.smbhackathon.shipminders.utility;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -13,8 +13,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.pb.reminderapp.R;
-import com.pb.reminderapp.model.EventInfo;
+import com.smbhackathon.shipminders.R;
+import com.smbhackathon.shipminders.model.EventInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;

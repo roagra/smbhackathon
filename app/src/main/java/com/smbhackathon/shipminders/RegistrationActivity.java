@@ -1,4 +1,4 @@
-package com.pb.reminderapp;
+package com.smbhackathon.shipminders;
 
 /**
  * Created by ro003ag on 10/8/2017.
@@ -31,11 +31,11 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
-import com.pb.reminderapp.model.EventInfo;
-import com.pb.reminderapp.model.RateResponse;
-import com.pb.reminderapp.service.ReminderAppService;
-import com.pb.reminderapp.utility.GetAPIData;
-import com.pb.reminderapp.utility.PreferencesUtils;
+import com.smbhackathon.shipminders.model.EventInfo;
+import com.smbhackathon.shipminders.model.RateResponse;
+import com.smbhackathon.shipminders.service.ReminderAppService;
+import com.smbhackathon.shipminders.utility.GetAPIData;
+import com.smbhackathon.shipminders.utility.PreferencesUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +56,7 @@ public class RegistrationActivity extends Activity
     private View mLoginFormView;
     private RegistrationActivity mainActivity;
 
+
     public static Context getContext() {
         return context;
     }
@@ -71,7 +72,7 @@ public class RegistrationActivity extends Activity
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
-    private static final String WAIT_TEXT = "Getting Shipment Details from Google Calender....";
+    private static final String WAIT_TEXT = "Registering....";
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = {CalendarScopes.CALENDAR};
     //private static final String SANDBOX_OAUTH_URL = "https://api-sandbox.pitneybowes.com/oauth/token";
@@ -123,6 +124,7 @@ public class RegistrationActivity extends Activity
     }
 
     private void attemptLogin() {
+        mProgress.show();
         new LoginTasks().execute();
 
 
@@ -167,6 +169,7 @@ public class RegistrationActivity extends Activity
 
         @Override
         protected void onPostExecute(Boolean output) {
+            mProgress.hide();
             PreferencesUtils.saveRegistrationPreference("", addressView.getText().
                     toString(), firstNameView.getText().toString(), lastNameView.getText().toString(), sandboxToken, prodToken, currentTimeInMillis);
 
@@ -185,6 +188,7 @@ public class RegistrationActivity extends Activity
 
 
     private void getResultsFromApi() {
+        mProgress.show();
         if (!isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) {

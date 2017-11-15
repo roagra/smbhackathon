@@ -1,11 +1,11 @@
-package com.pb.reminderapp.utility;
+package com.smbhackathon.shipminders.utility;
 
 import android.content.SharedPreferences;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.gson.Gson;
-import com.pb.reminderapp.model.EventInfo;
-import com.pb.reminderapp.model.PostCodeResponse;
+import com.smbhackathon.shipminders.model.EventInfo;
+import com.smbhackathon.shipminders.model.PostCodeResponse;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,17 +1,17 @@
-package com.pb.reminderapp.service;
+package com.smbhackathon.shipminders.service;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
 import com.google.api.services.calendar.model.Events;
-import com.pb.reminderapp.model.EventDetails;
-import com.pb.reminderapp.model.EventInfo;
-import com.pb.reminderapp.model.PostCodeResponse;
-import com.pb.reminderapp.model.RateRequest;
-import com.pb.reminderapp.model.RateResponse;
-import com.pb.reminderapp.utility.GetAPIData;
-import com.pb.reminderapp.utility.PreferencesUtils;
+import com.smbhackathon.shipminders.model.EventDetails;
+import com.smbhackathon.shipminders.model.EventInfo;
+import com.smbhackathon.shipminders.model.PostCodeResponse;
+import com.smbhackathon.shipminders.model.RateRequest;
+import com.smbhackathon.shipminders.model.RateResponse;
+import com.smbhackathon.shipminders.utility.GetAPIData;
+import com.smbhackathon.shipminders.utility.PreferencesUtils;
 
 import java.io.IOException;
 import java.text.DateFormat;
