@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
+    <uses-sdk android:minSdkVersion="15"
+        android:targetSdkVersion="23"
+        android:maxSdkVersion="26" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ship_minders"

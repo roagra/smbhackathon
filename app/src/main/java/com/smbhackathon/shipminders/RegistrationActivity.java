@@ -16,6 +16,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.webkit.WebView;
@@ -147,8 +148,8 @@ public class RegistrationActivity extends Activity
             List<RateResponse> rateResponseList = new ArrayList();
             try {
                  currentTimeInMillis = System.currentTimeMillis();
-                 sandboxToken = GetAPIData.getToken(GetAPIData.SANDBOX_OAUTH_URL , GetAPIData.SANDBOX_APIKEY_SECRET);
-                 prodToken = GetAPIData.getToken(GetAPIData.PROD_OAUTH_URL ,GetAPIData.PROD_APIKEY_SECRET);
+                 //sandboxToken = GetAPIData.getToken(GetAPIData.SANDBOX_OAUTH_URL , GetAPIData.SANDBOX_APIKEY_SECRET);
+                 //prodToken = GetAPIData.getToken(GetAPIData.PROD_OAUTH_URL ,GetAPIData.PROD_APIKEY_SECRET);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -210,7 +211,7 @@ public class RegistrationActivity extends Activity
     private void chooseAccount() {
         if (EasyPermissions.hasPermissions(
                 this, Manifest.permission.GET_ACCOUNTS)) {
-            String accountName = getPreferences(Context.MODE_PRIVATE)
+            String accountName = getPreferences(Context.MODE_APPEND)
                     .getString(PREF_ACCOUNT_NAME, null);
             if (accountName != null) {
                 mCredential.setSelectedAccountName(accountName);
@@ -250,11 +251,15 @@ public class RegistrationActivity extends Activity
                     String accountName =
                             data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
-                        SharedPreferences settings =
-                                getPreferences(Context.MODE_PRIVATE);
+                        //SharedPreferences settings =
+                          //      getPreferences(Context.MODE_APPEND);
+                        //SharedPreferences.Editor editor = settings.edit();
+                        //editor.putString(PREF_ACCOUNT_NAME, accountName);
+                        //editor.apply();
+                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
-                        editor.apply();
+                        editor.commit();
                         mCredential.setSelectedAccountName(accountName);
                         getResultsFromApi();
                     }

@@ -41,6 +41,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.AdapterView;
@@ -92,6 +93,11 @@ public class MainActivity extends Activity
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
+        String accountName = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(PREF_ACCOUNT_NAME, null);
+        if (accountName != null) {
+            mCredential.setSelectedAccountName(accountName);
+        }
         ImageView backImageView = findViewById(R.id.image_view_header_icon);
         backImageView.setOnClickListener(new View.OnClickListener() {
             @Override
