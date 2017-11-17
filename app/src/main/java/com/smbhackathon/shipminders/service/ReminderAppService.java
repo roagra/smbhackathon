@@ -94,7 +94,7 @@ public class ReminderAppService {
         Map<String,DeliveryInfo> dayAndRateMap = new HashMap<>();
         EventInfo eventInfo = new EventInfo();
         String requiredDeliveryDate = eventDetails.getEventStartDate();
-        DateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        DateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = originalFormat.parse(requiredDeliveryDate);
         String formattedRequiredDeliveryDate = targetFormat.format(date);
@@ -363,12 +363,12 @@ public class ReminderAppService {
         toAddress = PreferencesUtils.getPostCodeResponse(toAddressFromEvent);
         fromAddress = PreferencesUtils.getPostCodeResponse(PreferencesUtils.getAddress());
 
-        if(null == toAddress) {
+        if(null == toAddress || null == toAddress.getPostCode1()) {
             toAddress = GetAPIData.getPostCode(toAddressFromEvent);
             PreferencesUtils.savePostCodeResponse(toAddressFromEvent,toAddress);
         }
 
-        if(null == fromAddress){
+        if(null == fromAddress || null == fromAddress.getPostCode1()){
             fromAddress = GetAPIData.getPostCode(PreferencesUtils.getAddress());
             PreferencesUtils.savePostCodeResponse(PreferencesUtils.getAddress(),fromAddress);
         }

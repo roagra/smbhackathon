@@ -58,15 +58,15 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends Activity
         implements EasyPermissions.PermissionCallbacks {
 
-    private static Context context;
+    //private static Context context;
     private ListView listView;
     private LazyAdapter adapter;
     private MainActivity mainActivity;
     final Handler handler = new Handler();
 
-    public static Context getContext() {
+  /*  public static Context getContext() {
         return context;
-    }
+    }*/
 
 
     GoogleAccountCredential mCredential;
@@ -84,7 +84,7 @@ public class MainActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = getApplicationContext();
+        //context = getApplicationContext();
         mainActivity = this;
         setContentView(R.layout.notification_activity);
         mProgress = new ProgressDialog(this);
@@ -93,7 +93,7 @@ public class MainActivity extends Activity
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
-        String accountName = PreferenceManager.getDefaultSharedPreferences(context)
+        String accountName = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                 .getString(PREF_ACCOUNT_NAME, null);
         if (accountName != null) {
             mCredential.setSelectedAccountName(accountName);
@@ -120,9 +120,9 @@ public class MainActivity extends Activity
                 }
                 PreferencesUtils.setSelectedEventInfo(selectedEventInfo);
                 PreferencesUtils.setCredentials(mCredential);
-                Intent intent = new Intent(getContext(), PrintPreviewActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getContext().startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, PrintPreviewActivity.class);
+                //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
 
