@@ -175,6 +175,7 @@ public class RegistrationActivity extends Activity
                     toString(), firstNameView.getText().toString(), lastNameView.getText().toString(), sandboxToken, prodToken, currentTimeInMillis);
 
             Intent intent = new Intent(getContext(), LabelCountActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
         }
 

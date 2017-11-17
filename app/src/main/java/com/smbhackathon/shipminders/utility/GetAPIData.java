@@ -39,6 +39,9 @@ public class GetAPIData {
     public static final String SANDBOX_APIKEY_SECRET = "VFRVTHVPWkdUdzNVWGRtYkJ2NTRYNVBQbzBYc2g2MDA6UWNjR25Fa09lcElEQkNuWA==";
     public static final String PROD_APIKEY_SECRET = "R3pWN01BOGd1Yk1hdHh4aERuaE1QaDNJcmhHZ0FyQzY6S3VwM0dMU1FvTXNCVWRhdQ==";
 
+    //public static final String SANDBOX_APIKEY_SECRET = "THhmc0dHeTZHZUgyRm9IUTlsTlZBNFVOR1NzTE9aUGs6dzMxV014TkJBYVV6VmIyQQ==";
+    //public static final String PROD_APIKEY_SECRET = "WXU1UkNOd290bHY1bXFHd0VHMFBnTk9qVUVWc3pNd3g6dkJydVh0TURxOXZFSW56bw==";
+
 /*    private static EventDetails eventDetails;
 
     public static EventDetails getSelectedEventDetails() {
